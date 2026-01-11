@@ -1,0 +1,55 @@
+\documentclass{article}
+
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}{Corollary}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{question}{Question}[section]
+\newtheorem{remark}{Remark}[section]
+
+\renewcommand{\Im}{\mathrm{Im}\,}
+\newcommand{\Ker}{\mathrm{Ker}\,}
+
+\begin{document}
+A review of some concepts from Linear Algebra and facts about Abelian groups.
+
+\section{Exact Sequences}
+\begin{definition}
+    An exact sequence of groups \(\{H_k\}\) is one where
+    there exists a homomorphism \(h_k: H_{k-1} \rightarrow H_k\) for each \(k\)
+    such that \(\Im(h_{k+1}) = \Ker(h_k)\) for each \(k\).
+\end{definition}
+
+\begin{remark}
+    If the following sequence is exact, then \(g(f(A))\) is trivial.
+    \[
+        0 \rightarrow A \xrightarrow{f} B \xrightarrow{g} C \rightarrow 0
+    \]
+\end{remark}
+\begin{proof}
+Let \(x \in A\), then \(f(x) \in \Ker(g)\) so \(g(f(x)) = 0\).
+\end{proof}
+
+\begin{lemma}
+    If the following sequence is exact, then \(C \cong B / \Im(f)\).
+    \[
+        0 \rightarrow A \xrightarrow{f} B \xrightarrow{g} C \rightarrow 0
+    \]
+\end{lemma}
+\begin{proof}
+By the fundamental theorem of group homomorphisms, \(C \cong B / \Ker(g)\).
+By exactness, \(C \cong B / \Im(f)\).
+\end{proof}
+
+\end{document}

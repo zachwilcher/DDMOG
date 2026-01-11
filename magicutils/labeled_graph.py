@@ -1,4 +1,7 @@
 
+from functools import reduce
+from itertools import accumulate
+
 class LabeledGraph:
     def __init__(self, graph, group):
         self.graph = graph
@@ -12,7 +15,10 @@ class LabeledGraph:
         in_nbhd = self.graph.neighbors_in(vertex)
         out_nbhd = self.graph.neighbors_out(vertex)
 
-        weight = accumulate(in_nbhd) - accumulate(out_nbhd)
+        in_weight = accumulate(in_nbhd)
+        out_weight = accumulate(out_nbhd)
+        weight = in_weight / out_weight
+        #print(f"{vertex} ~ {in_weight} / {out_weight} = {weight}")
 
         return weight
 
