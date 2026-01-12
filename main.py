@@ -46,7 +46,7 @@ visualize(lg, "graph1.png")
 # try out permutations of cyclclg
 
 lg = graphs.make_cycle(4)
-label_permutator = GraphLabelPermutator(lg.graph)
+label_permutator = DiGraphEdgePermutator(lg.graph)
 found_new_magic_orientation = False
 found_antimagic_orientation = False
 for i, permuted_graph in enumerate(label_permutator):
