@@ -10,15 +10,16 @@ class LabeledGraph:
 
     def compute_weight(self, vertex):
 
-        accumulate = lambda nodes: reduce(lambda a, b: self.graph.get_vertex(a) * self.graph.get_vertex(b), nodes)
 
-        in_nbhd = self.graph.neighbors_in(vertex)
-        out_nbhd = self.graph.neighbors_out(vertex)
 
-        in_weight = accumulate(in_nbhd)
-        out_weight = accumulate(out_nbhd)
+        in_weight = self.group(1)
+        for v in self.graph.neighbors_in(vertex):
+            in_weight *= self.graph.get_vertex(v)
+        out_weight = self.group(1)
+        for v in self.graph.neighbors_out(vertex):
+            out_weight *= self.graph.get_vertex(v)
         weight = in_weight / out_weight
-        #print(f"{vertex} ~ {in_weight} / {out_weight} = {weight}")
+        print(f"{vertex} ~ {in_weight.list()} / {out_weight.list()} = {weight.list()}")
 
         return weight
 

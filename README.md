@@ -22,8 +22,8 @@ conda env update --prefix .conda-env -f conda-environment.yml --prune
 
 ## Hacks
 
-Sage thinks it wants libgsl.25.dylib (gsl version 2.6) but conda provides libgsl.27.dylib (gsl version 2.7).
-We can "fix" this by symlinking libgsl.25.dylib to libgsl.27.dylib:
+Sage thinks it wants `libgsl.25.dylib` (gsl version 2.6) but conda provides `libgsl.27.dylib` (gsl version 2.7).
+We can "fix" this by creating a symbolic link from `libgsl.27.dylib` to `libgsl.25.dylib` with
 ```bash
 cd ./.conda-env/lib
 ln -s libgsl.27.dylib libgsl.25.dylib

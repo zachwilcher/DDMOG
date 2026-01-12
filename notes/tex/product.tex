@@ -13,7 +13,7 @@ with vertex set \(V(\Gamma_1) \times V(\Gamma_2)\) where
 \begin{proposition}
 Suppose \(\Gamma_1\) and \(\Gamma_2\) are \(G_1\)-DDMOG and \(G_2\)-DDMOG respectively.
 If \(\Gamma_1\) and \(\Gamma_2\) are \textit{balanced},
-then \(\Gamma_1 \square \Gamma_2\) is an \((G_1 \oplus G_2)\)-DDMOG.
+then \(\Gamma_1 \square \Gamma_2\) is \((G_1 \oplus G_2)\)-DDMOG.
 \end{proposition}
 
 \begin{proof}
@@ -31,6 +31,8 @@ N^+(\Gamma_1 \square \Gamma_2, (\alpha, \beta)) =
 N^-(\Gamma_1 \square \Gamma_2, (\alpha, \beta)) =
 \{(\alpha', \beta) : \alpha' \in N^-(\Gamma_1, \alpha)\} \cup \{(\alpha, \beta') : \beta' \in N^-(\Gamma_2, \beta)\}
 \]
+
+Let \(k_1\) and \(k_2\) be the magic constants of \(\Gamma_1\) and \(\Gamma_2\) respectively.
 We can then write the weight of \((\alpha, \beta)\) as follows.
 \begin{align*}
 \hspace{.66cm}
@@ -53,8 +55,7 @@ We can then write the weight of \((\alpha, \beta)\) as follows.
 (k_1, 0) + (0, k_2) = (k_1, k_2)
 \end{align*}
 
-The second to last line follows from the fact that \(\Gamma_1\) and \(\Gamma_2\) are balanced.
-Also, \(k_1\) and \(k_2\) are the magic constants of \(\Gamma_1\) and \(\Gamma_2\) respectively.
+The second equality follows from the fact that \(\Gamma_1\) and \(\Gamma_2\) are balanced.
 
 
 

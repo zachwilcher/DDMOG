@@ -25,7 +25,7 @@ def create_cycle_graph(labels):
 H = AbelianGroup([3])
 G = create_cycle_graph(H.list())
 lg = LabeledGraph(G, H)
-newlg = product.cartesian_direct(lg, lg)
+newlg = product.tensor_direct(lg, lg)
 
 def pretty_label(lg, vertex):
     label = lg.graph.get_vertex(vertex)
