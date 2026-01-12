@@ -16,22 +16,24 @@ def create_cycle_graph(labels):
         G.set_vertex(i, labels[i])
 
     for source in range(length):
-        target = (source + 1) % length
+        target = (source - 1) % length
         G.add_edge(source, target)
 
     return G   
 
 
-H = AbelianGroup([3])
-G = create_cycle_graph(H.list())
-lg = LabeledGraph(G, H)
+group = AbelianGroup([4])
+graph = create_cycle_graph(group.list())
+lg = LabeledGraph(graph, group)
 newlg = product.tensor_direct(lg, lg)
 
 def pretty_label(lg, vertex):
     label = lg.graph.get_vertex(vertex)
-
     return f"({','.join(map(str, label.list()))})"
 
-p = newlg.graph.plot(vertex_labels = lambda v: pretty_label(newlg, v))
+p = newlg.graph.plot(
+    vertex_labels = lambda v: pretty_label(newlg, v),
+    vertex_size = 700
+)
 p.save('graph.png')
 print(newlg.check_magic())

@@ -1,62 +1,84 @@
 \section{Graph Products}
 
 \begin{definition}
-The Cartesian (box) product of two directed graphs \(\Gamma_1\) and \(\Gamma_2\) is a directed graph \(\Gamma_1 \square \Gamma_2\)
-with vertex set \(V(\Gamma_1) \times V(\Gamma_2)\) where
-\((\alpha, \beta)\) is directed at \((\alpha',\beta')\) if and only if exactly one of the following holds:
+The Cartesian (box) product of two directed graphs \(G_1\) and \(G_2\) is a directed graph \(G_1 \square G_2\)
+with vertex set \(V(G_1) \times V(G_2)\) where
+\((\alpha, \beta)\) is directed at \((\alpha',\beta')\) if and only if at least one of the following holds.
 \begin{enumerate}
     \item \(\alpha = \alpha'\) and \(\beta\) is directed at \(\beta'\).
     \item \(\beta = \beta'\) and \(\alpha\) is directed at \(\alpha'\).
 \end{enumerate}
 \end{definition}
 
+The following proposition was shown in \cite{deng2025group}.
 \begin{proposition}
-Suppose \(\Gamma_1\) and \(\Gamma_2\) are \(G_1\)-DDMOG and \(G_2\)-DDMOG respectively.
-If \(\Gamma_1\) and \(\Gamma_2\) are \textit{balanced},
-then \(\Gamma_1 \square \Gamma_2\) is \((G_1 \oplus G_2)\)-DDMOG.
+    \label{prop:cartesian}
+Suppose \(G_1\) and \(G_2\) are \(\Gamma_1\)-ODM and \(\Gamma_2\)-ODM respectively.
+If \(G\) and \(G\) are \textit{locally regular},
+then \(G \square G\) is \((\Gamma_1 \oplus \Gamma_2)\)-ODM.
 \end{proposition}
 
 \begin{proof}
-Define a labeling \(\ell: V(\Gamma_1) \times V(\Gamma_2) \rightarrow G_1 \oplus G_2\)
+Define a labeling \(\ell: V(G_1) \times V(G_2) \rightarrow \Gamma_1 \oplus \Gamma_2\)
 by \(\ell(\alpha, \beta) = (\ell_1(\alpha), \ell_2(\beta))\)
-where \(\ell_1: V(\Gamma_1) \rightarrow G_1\) and \(\ell_2: V(\Gamma_2) \rightarrow G_2\) are the labelings of \(\Gamma_1\) and \(\Gamma_2\) respectively.
+where \(\ell_1: V(G_1) \rightarrow \Gamma_1\) and \(\ell_2: V(G_2) \rightarrow \Gamma_2\) are the \(\Gamma_1\)-ODM and \(\Gamma_2\)-ODM labelings of \(G_1\) and \(G_2\) respectively.
 
-Let \((\alpha, \beta) \in V(\Gamma_1 \square \Gamma_2)\).
+Let \((\alpha, \beta) \in V(G_1 \square G_2)\).
 Observe that the in-neighborhood and out-neighborhood of \((\alpha, \beta)\) are exactly the following.
 \[
-N^+(\Gamma_1 \square \Gamma_2, (\alpha, \beta)) =
-\{(\alpha', \beta) : \alpha' \in N^+(\Gamma_1, \alpha)\} \cup \{(\alpha, \beta') : \beta' \in N^+(\Gamma_2, \beta)\}
+N^+(G_1 \square G_2, (\alpha, \beta)) =
+\{(\alpha', \beta) : \alpha' \in N^+(G_1, \alpha)\} \cup \{(\alpha, \beta') : \beta' \in N^+(G_2, \beta)\}
 \]
 \[
-N^-(\Gamma_1 \square \Gamma_2, (\alpha, \beta)) =
-\{(\alpha', \beta) : \alpha' \in N^-(\Gamma_1, \alpha)\} \cup \{(\alpha, \beta') : \beta' \in N^-(\Gamma_2, \beta)\}
+N^-(G_1 \square G_2, (\alpha, \beta)) =
+\{(\alpha', \beta) : \alpha' \in N^-(G_1, \alpha)\} \cup \{(\alpha, \beta') : \beta' \in N^-(G_2, \beta)\}
 \]
 
-Let \(k_1\) and \(k_2\) be the magic constants of \(\Gamma_1\) and \(\Gamma_2\) respectively.
+Let \(k_1\) and \(k_2\) be the magic constants of \(\ell_1\) and \(\ell_2\) respectively.
 We can then write the weight of \((\alpha, \beta)\) as follows.
 \begin{align*}
 \hspace{.66cm}
 &
- \sum_{\mathclap{\alpha '\in N^+(\Gamma_1, \alpha)}} \ell(\alpha', \beta)
-+ \sum_{\mathclap{\beta' \in N^+(\Gamma_2, \beta)}} \ell(\alpha, \beta')
-- \sum_{\mathclap{\alpha' \in N^-(\Gamma_1, \alpha)}} \ell(\alpha', \beta)
-- \sum_{\mathclap{\beta' \in N^-(\Gamma_2, \beta)}} \ell(\alpha, \beta') \\
+ \sum_{\mathclap{\alpha '\in N^+(G_1, \alpha)}} \ell(\alpha', \beta)
++ \sum_{\mathclap{\beta' \in N^+(G_2, \beta)}} \ell(\alpha, \beta')
+- \sum_{\mathclap{\alpha' \in N^-(G_1, \alpha)}} \ell(\alpha', \beta)
+- \sum_{\mathclap{\beta' \in N^-(G_2, \beta)}} \ell(\alpha, \beta') \\
 =&
-\sum_{\mathclap{\alpha '\in N^+(\Gamma_1, \alpha)}}   (\ell_1(\alpha'), \ell_2(\beta))
-- \sum_{\mathclap{\alpha' \in N^-(\Gamma_1, \alpha)}} (\ell_1(\alpha'), \ell_2(\beta))
-+ \sum_{\mathclap{\beta' \in N^+(\Gamma_2, \beta)}}   (\ell_1(\alpha),  \ell_2(\beta'))
-- \sum_{\mathclap{\beta' \in N^-(\Gamma_2, \beta)}}   (\ell_1(\alpha),  \ell_2(\beta')) \\
+\sum_{\mathclap{\alpha '\in N^+(G_1, \alpha)}}   (\ell_1(\alpha'), \ell_2(\beta))
+- \sum_{\mathclap{\alpha' \in N^-(G_1, \alpha)}} (\ell_1(\alpha'), \ell_2(\beta))
++ \sum_{\mathclap{\beta' \in N^+(G_2, \beta)}}   (\ell_1(\alpha),  \ell_2(\beta'))
+- \sum_{\mathclap{\beta' \in N^-(G_2, \beta)}}   (\ell_1(\alpha),  \ell_2(\beta')) \\
 =&
-\sum_{\mathclap{\alpha '\in N^+(\Gamma_1, \alpha)}}   (\ell_1(\alpha'), 0)
-- \sum_{\mathclap{\alpha' \in N^-(\Gamma_1, \alpha)}} (\ell_1(\alpha'), 0)
-+ \sum_{\mathclap{\beta' \in N^+(\Gamma_2, \beta)}}   (0,  \ell_2(\beta'))
-- \sum_{\mathclap{\beta' \in N^-(\Gamma_2, \beta)}}   (0,  \ell_2(\beta')) \\
+\sum_{\mathclap{\alpha '\in N^+(G_1, \alpha)}}   (\ell_1(\alpha'), 0)
+- \sum_{\mathclap{\alpha' \in N^-(G_1, \alpha)}} (\ell_1(\alpha'), 0)
++ \sum_{\mathclap{\beta' \in N^+(G_2, \beta)}}   (0,  \ell_2(\beta'))
+- \sum_{\mathclap{\beta' \in N^-(G_2, \beta)}}   (0,  \ell_2(\beta')) \\
 =&
 (k_1, 0) + (0, k_2) = (k_1, k_2)
 \end{align*}
 
-The second equality follows from the fact that \(\Gamma_1\) and \(\Gamma_2\) are balanced.
+The second equality follows from the fact that \(G_1\) and \(G_2\) are locally regular.
+
+\end{proof}
 
 
+\begin{definition}
+The tensor product of two directed graphs \(G_1\) and \(G_2\) is a directed graph \(G_1 \times G_2\)
+with vertex set \(V(G_1) \times V(G_2)\) where
+\((\alpha, \beta)\) is directed at \((\alpha',\beta')\) if and only if both \(\alpha\) is directed at \(\alpha'\) in \(G_1\)
+\textbf{and} \(\beta\) is directed at \(\beta'\) in \(G_2\).
+\end{definition}
 
+The following proposition was shown in \cite{MR3377094}
+
+\begin{proposition}
+Suppose \(G_1\) is \(r_1\)-regular and \(\Gamma_1\)-ODM and \(G_2\) is \(r_2\)-regular and \(\Gamma_2\)-ODM.
+Then \(G_1 \times G_2\) is \((\Gamma_1 \oplus \Gamma_2)\)-ODM.
+\end{proposition}
+
+\begin{proof}
+Let \(\ell_1: V(G_1) \rightarrow \Gamma_1\) and \(\ell_2: V(G_2) \rightarrow \Gamma_2\) be \(\Gamma_1\)-ODM and \(\Gamma_2\)-ODM labelings of \(G_1\) and \(G_2\) respectively.
+Using essentially the same labeling as in the Proposition \ref{prop:cartesian},
+it can easily be seen that the weight of some \((x,y) \in V(G_1 \times G_2)\) is \((r_2 k_1, r_1 k_2)\)
+where \(k_1\) and \(k_2\) are the magic constants of \(\ell_1\) and \(\ell_2\) respectively.
 \end{proof}

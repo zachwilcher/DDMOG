@@ -1,0 +1,13 @@
+\section{Definitions}
+\begin{definition}
+    Given an abelian group \(\Gamma\),
+    a directed graph \(G\) is \(\Gamma\)-orientable distance magic (\(\Gamma\)-ODM) if and only if
+    there exists a bijection \(\ell: V(G) \rightarrow \Gamma\) such that
+    for some \(k \in \Gamma\) and for every vertex \(x \in V(G)\),
+    \[
+    k = \sum_{y \in N^+(G,x)} \ell(y)
+    - \sum_{y \in N^-(G,x)} \ell(y)
+    \]
+    where \(N^+(G,x)\) and \(N^-(G,x)\) are the in-neighborhood and out-neighborhood of \(x\) respectively.
+    We call \(\ell\) a \(\Gamma\)-ODM labeling of \(G\) and \(k\) the magic constant of \(\ell\).
+\end{definition}
