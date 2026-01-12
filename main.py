@@ -1,39 +1,32 @@
-# monkey patch
-
-
-from sage.graphs.digraph import DiGraph
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
-
 from magicutils.labeled_graph import LabeledGraph
 from magicutils import product
+from magicutils import graphs
 
 
-def create_cycle_graph(labels):
-    G = DiGraph()
-    length = len(labels)
-    for i in range(length):
-        G.add_vertex(i)
-        G.set_vertex(i, labels[i])
+def visualize(lg, filename):
+    plot = lg.graph.plot(
+        vertex_labels = lg.pretty_label,
+        vertex_size = 700
+    )
+    plot.save(filename)
 
-    for source in range(length):
-        target = (source - 1) % length
-        G.add_edge(source, target)
+# try out the cartesian direct product with cycle graph
+cyclelg = graphs.make_cycle(3)
+new_cyclelg = product.cartesian_direct(cyclelg, cyclelg)
 
-    return G   
+print(f"C_3 \\box C_3 is {"magic" if new_cyclelg.check_magic() else "not magic"}")
+visualize(new_cyclelg, "cartesian_direct.png")
 
+# try out the tensor direct product with cycle graphs
+cyclelg = graphs.make_cycle(3)
+new_cyclelg = product.tensor_direct(cyclelg, cyclelg)
 
-group = AbelianGroup([4])
-graph = create_cycle_graph(group.list())
-lg = LabeledGraph(graph, group)
-newlg = product.tensor_direct(lg, lg)
+print(f"C_3 \\times C_3 is {"magic" if new_cyclelg.check_magic() else "not magic"}")
+visualize(new_cyclelg, "tensor_direct.png")
 
-def pretty_label(lg, vertex):
-    label = lg.graph.get_vertex(vertex)
-    return f"({','.join(map(str, label.list()))})"
+# see if the graph1 is magic
 
-p = newlg.graph.plot(
-    vertex_labels = lambda v: pretty_label(newlg, v),
-    vertex_size = 700
-)
-p.save('graph.png')
-print(newlg.check_magic())
+lg = graphs.make_graph1()
+
+print(f"graph1 is {"magic" if lg.check_magic() else "not magic"}")
+visualize(lg, "graph1.png")
