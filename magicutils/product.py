@@ -32,3 +32,10 @@ def tensor_direct(lg1, lg2):
     graph_product = lambda g1, g2: g1.tensor_product(g2)
     return x_direct(graph_product, lg1, lg2)
 
+def lexicographic_direct(lg1, lg2):
+    graph_product = lambda g1, g2: g1.lexicographic_product(g2)
+    return x_direct(graph_product, lg1, lg2)
+
+def strong_direct(lg1, lg2):
+    graph_product = lambda g1, g2: g1.strong_product(g2)
+    return x_direct(graph_product, lg1, lg2)
