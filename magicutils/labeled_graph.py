@@ -24,13 +24,12 @@ class LabeledGraph:
         for v in self.graph.neighbors_out(vertex):
             out_weight *= self.graph.get_vertex(v)
         weight = in_weight / out_weight
-        #print(f"{vertex} ~ {in_weight.list()} / {out_weight.list()} = {weight.list()}")
+        # print(f"{vertex} ~ {in_weight.list()} / {out_weight.list()} = {weight.list()}")
 
         return weight
 
     def check_magic(self):
         """Determine the weight of each node in the digraph and return True iff each weight in the graph is the same"""
-        is_magic = True
         magic_constant = None
         for x in self.graph.vertex_iterator():
 
@@ -38,10 +37,10 @@ class LabeledGraph:
 
             if magic_constant is None:
                 magic_constant = weight
-            else:
-                is_magic = weight == magic_constant
+            elif weight != magic_constant:
+                return False
 
-        return is_magic
+        return True
     
     def pretty_label(self, vertex):
         label = self.graph.get_vertex(vertex)

@@ -1,6 +1,5 @@
 import itertools
 
-
 class GraphLabelPermutator:
     def __init__(self, graph):
         self.graph = graph
@@ -13,9 +12,8 @@ class GraphLabelPermutator:
                 label = self.graph.get_vertex(original_vertex)
                 new_graph.set_vertex(new_vertex, label)
             yield new_graph
-        
 
-    
+
 class DiGraphEdgePermutator:
     def __init__(self, graph):
         self.graph = graph
