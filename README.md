@@ -31,11 +31,21 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 
 
 ## Notes
-For graphs on 7 vertices, the sparsest connected DDMOG has 12 edges and starts
-at graph number 1166308915 (index starts at 1 in this number) in the
-`PossibleGraphIterator`.  Might be interesting to look at graphs with number:
-- 1166309838
-- 1181345436
-- 1181346149
-- 1181877911
-- 1181878634
+Dr. Aceska thinks that the sparsest DDMOG on order 9 has 16 edges.
+Our code found a DDMOG of order 9 with 15 edges.
+
+## Experiments
+
+As of 16 Jan 2026, here is the speed of the current algorithm.
+
+```
+Found 6 DDMOGs out of 59049 possible oriented graphs of order 5 in 0.35 seconds.
+Found 22 DDMOGs out of 14348907 possible oriented graphs of order 6 in 0.00 seconds.
+Found 296 DDMOGs out of 10460353203 possible oriented graphs of order 7 in 0.08 seconds.
+Found 9930 DDMOGs out of 22876792454961 possible oriented graphs of order 8 in 3.10 seconds.
+Found 754804 DDMOGs out of 150094635296999121 possible oriented graphs of order 9 in 320.36 seconds.
+```
+
+Note that 6 and 22 on order 5 and 6 align with the final section of Difference distance magic oriented graphs 
+by Alison Marr et al.
+

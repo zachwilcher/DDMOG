@@ -13,41 +13,46 @@ from sage.graphs.digraph import DiGraph
 
 class Solver:
 
-    def __init__(self, coefficients, goal):
+    def __init__(self, coefficients):
         self.coefficients = coefficients
-        self.goal = goal
         self.current_solution = None
     
-    def __iter__(self):
+    def solve(self, goal):
+
+        # list of maximum possible sums on and after each index
+        maximum_sums = [0] * len(self.coefficients)
+        for i in range(len(self.coefficients)):
+            for coefficient in self.coefficients[i:]:
+                maximum_sums[i] += abs(coefficient)
+
         
         stack = []
-        stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64)))
+        stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64), 0))
 
         while len(stack) > 0:
-            (index, solution) = stack.pop()
+            (index, solution, current_sum) = stack.pop()
 
 
-            if index == len(solution):
-                s = np.dot(self.coefficients, solution)
-                if s == self.goal:
+            if index == len(solution) or abs(current_sum - goal) > maximum_sums[index]:
+                if current_sum == goal:
                     yield solution
             elif self.coefficients[index] == 0:
                 # ensure we don't waste time on trying to find
                 # the right number to use when we just multiply 
                 # it with 0.
-                stack.append((index + 1, solution))
+                stack.append((index + 1, solution, current_sum))
             else:
-                new_solution = np.copy(solution)
-                new_solution[index] = 0
-                stack.append((index + 1, new_solution))
+                #new_solution = np.copy(solution)
+                #new_solution[index] = 0
+                stack.append((index + 1, solution, current_sum))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = 1
-                stack.append((index + 1, new_solution))
+                stack.append((index + 1, new_solution, current_sum + self.coefficients[index]))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = -1
-                stack.append((index + 1, new_solution))
+                stack.append((index + 1, new_solution, current_sum - self.coefficients[index]))
 
 class DDMOGIterator:
     def __init__(self, n):
@@ -67,15 +72,18 @@ class DDMOGIterator:
             label = self.base_digraph.get_vertex(vertex)
             vertex_labels[vertex] = label
 
-        coefficient_vectors = []
+        solvers = []
         for i in range(self.n):
             # [0, 0, ..., 1, 1]
             # ignore up to and including the current vertex
             mask = np.append(np.zeros(i + 1, dtype=np.int64), np.ones(self.n - (i + 1), dtype=np.int64))
-            coefficient_vectors.append(mask * vertex_labels)
+            coefficient_vector = mask * vertex_labels
+            solvers.append(Solver(coefficient_vector))
 
         stack = []
-        stack.append((0, iter(Solver(coefficient_vectors[0], 0)), None))
+
+        # start the backtracking at vertex 0 with a goal weight of 0
+        stack.append((0, solvers[0].solve(0), None))
 
         while len(stack) > 0:
             
@@ -96,7 +104,7 @@ class DDMOGIterator:
                 for vertex, _, solution in stack:
                     label = vertex_labels[vertex]
                     new_goal -= label * solution[next_vertex]
-                new_solver = iter(Solver(coefficient_vectors[next_vertex], -new_goal))
+                new_solver = solvers[next_vertex].solve(-new_goal)
                 stack.append((next_vertex, new_solver, None))
                 
 
