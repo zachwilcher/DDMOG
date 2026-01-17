@@ -1,0 +1,22 @@
+\section{Computation}
+
+\begin{proposition}
+There are 
+\(\displaystyle
+\sum_{k=0}^{\binom{n}{2}} \binom{\binom{n}{2}}{k} 2^k = 3^{\binom{n}{2}}
+\)
+oriented graphs on \(n\) vertices.
+\end{proposition}
+\begin{proof}
+There are \(\binom{n}{2}\) edges in \(K_n\).
+For each number \(k\) of possible edges from \(0\) to \(\binom{n}{2}\)
+we have \(\binom{n(n+1)/2}{k}\) ways to put undirected edges between
+vertices.
+For each placement of \(k\) possible edges, there
+are \(2^k\) possible orientations of those edges.
+Using the binomial theorem, the resulting sum can be simplified.
+\end{proof}
+
+So, an algorithm that checks if every possible oriented graph is magic is at least \(O(3^{n^2})\).
+If 50000 graphs can be checked in 1 second, then to check every graph on 7 vertices
+we would need at least 58 hours.

@@ -32,8 +32,8 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 
 ## Notes
 For graphs on 7 vertices, the sparsest connected DDMOG has 12 edges and starts
-at graph number 1166308915 (index starts at 1) in the `PossibleGraphIterator`.
-Might be interesting to look at graphs with number:
+at graph number 1166308915 (index starts at 1 in this number) in the
+`PossibleGraphIterator`.  Might be interesting to look at graphs with number:
 - 1166309838
 - 1181345436
 - 1181346149

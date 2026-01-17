@@ -1,79 +1,111 @@
+"""
+Module for constructing graphs labeled with integers.
+All digraphs are assumed to have vertices be the integers 0 through n-1
+where n is the order of the graph.
+"""
 
 from sage.graphs.digraph import DiGraph
-from sage.groups.abelian_gps.abelian_group import AbelianGroup
-from magicutils.labeled_graph import LabeledGraph
 import itertools
+from magicutils.check_magic import get_vertex_imbalance, get_graph_imbalance
 
-def make_graph1():
-    edges = [
-        (1,2), (1,4), (6,1),
-        (2,3), (2,4), (6,2),
-        (4,3), (3,6),
+def create_bipartite(m, n):
+    """Requires (m + n)*(m + n + 1) % 4 == 0 and m >= 3 and n >= 3. 
+    Create a bipartite graph K_{m,n} with a DDM labeling as specified
+    in Theorem 5 of Difference Distance magic oriented graphs by Alison Marr et. al."""
 
-        (5,6), (7,5), (8,5), (5,9),
-        (6,7), (6,8), (10,6),
-        (8,7), (9,7), (7,10),
-        (9,8), (8,10),
-        (10,9)
-    ]
-    graph = DiGraph(edges)
+    if not ((m + n)*(m + n + 1) % 4 == 0 and m >= 3 and n >= 3):
+        raise ValueError("m and n do not satisfy the necessary conditions.")
 
-    return LabeledGraph(graph)
+    s = m // 4
+    t = n // 4
+    X1 = None
+    X2 = None
+    Y1 = None
+    Y2 = None
 
-def make_cycle(length):
-    group = AbelianGroup([length])
-    labels = group.list()
+    # The closed interval [a, b] corresponds to list(range(a-1, b)) in python
 
-    graph = DiGraph()
-    length = len(labels)
-    for i in range(length):
-        graph.add_vertex(i)
-        graph.set_vertex(i, labels[i])
+    if (m % 4 == 0) and (n % 4 == 0):
+        X1 = list(range(0, s)) + list(range(3*s + 4 * t, 4*s + 4 * t))
+        X2 = list(range(s, 2*s)) + list(range(2*s + 4*t, 3*s + 4*t))
+        Y1 = list(range(2*s, 2*s + t)) + list(range(2*s + 3*t, 2*s + 4*t))
+        Y2 = list(range(2*s + t, 2*s + 3*t))
+    elif (m % 4 == 0) and (n % 4 == 3):
+        X1 = list(range(2*t + 1, s + 2*t + 1)) + list(range(3*s + 2*t + 1, 4*s + 2*t + 1))
+        X2 = list(range(s + 2*t + 1, 3*s + 2*t + 1))
+        Y1 = [4*s + 4*t + 2] + list(range(t + 1, 2*t + 1)) + list(range(4*s + 2*t + 1, 4*s + 3*t + 1))
+        Y2 = list(range(0, t + 1)) + list(range(4*s + 3*t + 1, 4*s + 4*t + 2))
+    elif (m % 4 == 1) and (n % 4 == 3):
+        #TODO
+        X1 = None
+        X2 = None
+        Y1 = None
+        Y2 = None
+    elif (m % 4 == 1) and (n % 4 == 2):
+        #TODO
+        X1 = None
+        X2 = None
+        Y1 = None
+        Y2 = None
+    elif (m % 4 == 2) and (n % 4 == 2):
+        #TODO
+        X1 = None
+        X2 = None
+        Y1 = None
+        Y2 = None
 
-    for source in range(length):
-        target = (source - 1) % length
-        graph.add_edge(source, target)
+    digraph = DiGraph()
+    digraph.add_vertices(X1)
+    digraph.add_vertices(X2)
+    digraph.add_vertices(Y1)
+    digraph.add_vertices(Y2)
+    # X1 -> Y1 -> X2 -> Y2 -> X1
+    digraph.add_edges(itertools.product(X1, Y1))
+    digraph.add_edges(itertools.product(Y1, X2))
+    digraph.add_edges(itertools.product(X2, Y2))
+    digraph.add_edges(itertools.product(Y2, X1))
+    # labels are integers 1 through m + n
+    # not 0 through m + n - 1
+    for vertex in digraph.vertex_iterator():
+        label = vertex + 1
+        digraph.set_vertex(vertex, label)
+    return digraph
 
 
-    return LabeledGraph(graph, group)
+def balance_ddmog(digraph):
+    """Balance a ddmog with imbalance 1 using 
+    Theorem 3.7 from "New results on Difference Distance Magic Labeling.
+    Requires that the input digraph has imbalance 1.
+    """
 
-class PossibleGraphIterator:
-    def __init__(self, n, staring_size = 1, ending_size=None):
-        self.n = n
-        self.starting_size = staring_size
-        self.ending_size = ending_size
+    if get_graph_imbalance(digraph) != 1:
+        raise ValueError("Input digraph does not have imbalance 1.")
 
-        self.graph = DiGraph()
-        for i in range(1, self.n + 1, 1):
-            self.graph.add_vertex(i)
-        
-        self.possible_edges = []
-        for x in range(1, self.n + 1, 1):
-            for y in range(x + 1, self.n + 1, 1):
-                # edge = f"({x},{y})"
-                edge = (x,y)
-                self.possible_edges.append(edge)
+    S_plus = []
+    S_minus = []
+    new_digraph = digraph.copy()
+    for vertex in new_digraph.vertex_iterator():
+        # update the labels
+        old_label = new_digraph.get_vertex(vertex)
+        new_label = old_label + 1
+        new_digraph.set_vertex(vertex, new_label)
 
-        if self.ending_size is None:
-            self.ending_size = len(self.possible_edges)
-        
+        # sort the vertex into the appropriate set
+        imbalance = get_vertex_imbalance(new_digraph, vertex)
+        if imbalance == 1:
+            S_plus.append(vertex)
+        elif imbalance == -1:
+            S_minus.append(vertex)
 
-    def __iter__(self):
-        """Iterate through all possible directed graphs on n vertices."""
+    new_vertex = digraph.order()
+    new_digraph.add_vertex(new_vertex)
+    new_digraph.set_vertex(new_vertex, 1)
 
-        for size in range(self.starting_size, self.ending_size + 1, 1):
+    for vertex in S_minus:
+        new_digraph.add_edge(new_vertex, vertex)
+    for vertex in S_plus:
+        new_digraph.add_edge(vertex, new_vertex)
 
-            for combination in itertools.combinations(self.possible_edges, size):
+    return new_digraph
 
-                orientations = itertools.product([False, True], repeat=len(combination))
-                for orientation in orientations:
 
-                    new_graph = self.graph.copy()
-                    for reverse_edge, edge in zip(orientation, combination):
-                        if reverse_edge is False:
-                            new_graph.add_edge(edge[0], edge[1])
-                        else:
-                            new_graph.add_edge(edge[1], edge[0])
-                
-                    yield new_graph
-                    
