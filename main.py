@@ -7,18 +7,22 @@ import time
 from pathlib import Path
 
 
-graph_number = 1 
-order = 6
-dir_path = Path(f"ddmog_order_{order}")
-dir_path.mkdir(parents=True, exist_ok=True)
-
+order = 8
 start_time = time.time()
+sparsest_digraph = None
+ddmogs = 0
 for digraph in DDMOGIterator(order):
     if is_connected(digraph):
-        end_time = time.time()
-        print(f"found a ddmog in {end_time - start_time} seconds")
-        plot = digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
-        plot.save(f"ddmog_order_{order}/{graph_number}.png")
-    graph_number += 1
+        ddmogs += 1
+        if (sparsest_digraph is None) or (digraph.size() < sparsest_digraph.size()):
+            sparsest_digraph = digraph
 
-    start_time = time.time()
+    if ddmogs % 1000 == 0:
+        print(f"Checked {ddmogs} DDMOGs...")
+
+end_time = time.time()
+
+print(f"Found {ddmogs} DDMOGs of order {order} in {end_time - start_time:.2f} seconds.")
+
+plot = sparsest_digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
+plot.save(f"sparsest_order_{order}_ddmog.png")
