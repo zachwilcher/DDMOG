@@ -44,8 +44,9 @@ Found 22 DDMOGs out of 14348907 possible oriented graphs of order 6 in 0.00 seco
 Found 296 DDMOGs out of 10460353203 possible oriented graphs of order 7 in 0.08 seconds.
 Found 9930 DDMOGs out of 22876792454961 possible oriented graphs of order 8 in 3.10 seconds.
 Found 754804 DDMOGs out of 150094635296999121 possible oriented graphs of order 9 in 320.36 seconds.
+Found 130528594 DDMOGs out of 2954312706550833698643 possible oriented graphs of order 10 in 79081.32 seconds.
 ```
 
-Note that 6 and 22 on order 5 and 6 align with the final section of Difference distance magic oriented graphs 
-by Alison Marr et al.
-
+Note that 6, 22, and 296 on order 5, 6, and 7 align with the final section of Difference distance magic oriented graphs by Alison Marr et al.
+However, 9930 on order 8 is different from the reported 8240 in that paper.
+They remark that they do not account for isomorphic graphs under rotations and reflections.

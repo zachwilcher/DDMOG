@@ -15,16 +15,14 @@ class Solver:
 
     def __init__(self, coefficients):
         self.coefficients = coefficients
-        self.current_solution = None
-    
-    def solve(self, goal):
 
         # list of maximum possible sums on and after each index
-        maximum_sums = [0] * len(self.coefficients)
+        self.maximum_sums = [0] * len(self.coefficients)
         for i in range(len(self.coefficients)):
             for coefficient in self.coefficients[i:]:
-                maximum_sums[i] += abs(coefficient)
-
+                self.maximum_sums[i] += abs(coefficient)
+    
+    def solve(self, goal):
         
         stack = []
         stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64), 0))
@@ -33,7 +31,7 @@ class Solver:
             (index, solution, current_sum) = stack.pop()
 
 
-            if index == len(solution) or abs(current_sum - goal) > maximum_sums[index]:
+            if index == len(solution) or abs(current_sum - goal) > self.maximum_sums[index]:
                 if current_sum == goal:
                     yield solution
             elif self.coefficients[index] == 0:
