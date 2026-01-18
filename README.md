@@ -50,3 +50,6 @@ Found 130528594 DDMOGs out of 2954312706550833698643 possible oriented graphs of
 Note that 6, 22, and 296 on order 5, 6, and 7 align with the final section of Difference distance magic oriented graphs by Alison Marr et al.
 However, 9930 on order 8 is different from the reported 8240 in that paper.
 They remark that they do not account for isomorphic graphs under rotations and reflections.
+
+Conjecture: For each n \neq 6, there is a DDMOG with less than or equal to \ceil(3n/2) + 1 edges.
+Data up to n = 11 supports it.

@@ -37,39 +37,36 @@ def save(digraph, name):
     plot.save(f"{name}.png")
 
 min_order = 5
-max_order = 14
+max_order = 20
 
 for order in range(min_order, max_order + 1):
 
     order_index = order - min_order
-    sparsest_ddmog = None
-    coarsest_ddmog = None
-    highest_degree_ddmog = None
+    sparse_ddmog = None
 
     total_oriented_graphs = 3 ** (math.comb(order, 2))
-    ddmogs = 0
+    max_size = math.ceil(1.5 * order) + 2
+
+    iterations = 0
     start_time = time.time()
-    for digraph in DDMOGIterator(order):
+    for digraph in DDMOGIterator(order, max_size):
+        iterations += 1
         if is_connected(digraph):
-            ddmogs += 1
-            
-            if (sparsest_ddmog is None) or (digraph.size() < sparsest_ddmog.size()):
-                sparsest_ddmog = digraph
+            sparse_ddmog = digraph
+            break
+        if iterations % 1000000 == 0:
+            print(f"Processed {iterations} graphs in {time.time() - start_time:.2f} seconds...")
 
-            if (coarsest_ddmog is None) or (digraph.size() > coarsest_ddmog.size()):
-                coarsest_ddmog = digraph
-            
-            if (highest_degree_ddmog is None) or (max(digraph.degree()) > max(highest_degree_ddmog.degree())):
-                highest_degree_ddmog = digraph
-
-        if ddmogs % 500000 == 0:
-            print(f"Found {ddmogs} DDMOGs... of order {order} in {time.time() - start_time}")
     end_time = time.time()
-    print(f"Found all {ddmogs} DDMOGs of order {order} in {end_time - start_time:.2f} seconds.")
+    if sparse_ddmog is not None:
+        print(f"Found a order {order} sparse DDMOG in {end_time - start_time:.2f} seconds.")
+        # save(sparse_ddmog, f"results/order_{order}_sparse_ddmog")
+    else:
+        print(f"No order {order} sparse DDMOG found within size limit! (took {end_time - start_time:.2f} seconds)")
 
-    save(sparsest_ddmog, f"results/order_{order}_sparsest__ddmog")
-    save(coarsest_ddmog, f"results/order_{order}_coarsest_ddmog")
-    save(highest_degree_ddmog, f"results/order_{order}_highest_degree_ddmog")
+    #save(sparsest_ddmog, f"results/order_{order}_sparsest__ddmog")
+    #save(coarsest_ddmog, f"results/order_{order}_coarsest_ddmog")
+    #save(highest_degree_ddmog, f"results/order_{order}_highest_degree_ddmog")
 
 
 

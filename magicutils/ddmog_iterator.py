@@ -10,6 +10,7 @@ that we need to reduce to 0.
 
 import numpy as np
 from sage.graphs.digraph import DiGraph
+import math
 
 class Solver:
 
@@ -22,40 +23,44 @@ class Solver:
             for coefficient in self.coefficients[i:]:
                 self.maximum_sums[i] += abs(coefficient)
     
-    def solve(self, goal):
+    def solve(self, goal, max_vars=None):
+        max_vars = len(self.coefficients) if max_vars is None else max_vars
         
         stack = []
-        stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64), 0))
+        stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64), 0, 0))
 
         while len(stack) > 0:
-            (index, solution, current_sum) = stack.pop()
+            (index, solution, current_sum, nonzero_vars) = stack.pop()
 
 
-            if index == len(solution) or abs(current_sum - goal) > self.maximum_sums[index]:
+            if index == len(solution) or \
+                abs(current_sum - goal) > self.maximum_sums[index] or \
+                (nonzero_vars >= max_vars):
                 if current_sum == goal:
                     yield solution
             elif self.coefficients[index] == 0:
                 # ensure we don't waste time on trying to find
                 # the right number to use when we just multiply 
                 # it with 0.
-                stack.append((index + 1, solution, current_sum))
+                stack.append((index + 1, solution, current_sum, nonzero_vars))
             else:
                 #new_solution = np.copy(solution)
                 #new_solution[index] = 0
-                stack.append((index + 1, solution, current_sum))
+                stack.append((index + 1, solution, current_sum, nonzero_vars))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = 1
-                stack.append((index + 1, new_solution, current_sum + self.coefficients[index]))
+                stack.append((index + 1, new_solution, current_sum + self.coefficients[index], nonzero_vars + 1))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = -1
-                stack.append((index + 1, new_solution, current_sum - self.coefficients[index]))
+                stack.append((index + 1, new_solution, current_sum - self.coefficients[index], nonzero_vars + 1))
 
 class DDMOGIterator:
-    def __init__(self, n):
+    def __init__(self, n, max_size=None):
         self.n = n
 
+        self.max_size = math.comb(n, 2) if max_size is None else max_size
         self.base_digraph = DiGraph()
         self.base_digraph.add_vertices(range(self.n))
         for vertex in self.base_digraph.vertex_iterator():
@@ -97,12 +102,14 @@ class DDMOGIterator:
                 # but we can build the graph now.
                 yield self.build_graph(stack)
             else:
+                current_size = 0
                 new_goal = 0
                 next_vertex = vertex + 1
                 for vertex, _, solution in stack:
                     label = vertex_labels[vertex]
                     new_goal -= label * solution[next_vertex]
-                new_solver = solvers[next_vertex].solve(-new_goal)
+                    current_size += np.count_nonzero(solution)
+                new_solver = solvers[next_vertex].solve(-new_goal, self.max_size - current_size)
                 stack.append((next_vertex, new_solver, None))
                 
 
