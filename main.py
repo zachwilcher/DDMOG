@@ -45,7 +45,7 @@ for order in range(min_order, max_order + 1):
     sparse_ddmog = None
 
     total_oriented_graphs = 3 ** (math.comb(order, 2))
-    max_size = math.ceil(1.5 * order) + 2
+    max_size = math.ceil(1.5 * order) + 1
 
     iterations = 0
     start_time = time.time()
@@ -60,7 +60,7 @@ for order in range(min_order, max_order + 1):
     end_time = time.time()
     if sparse_ddmog is not None:
         print(f"Found a order {order} sparse DDMOG in {end_time - start_time:.2f} seconds.")
-        # save(sparse_ddmog, f"results/order_{order}_sparse_ddmog")
+        #save(sparse_ddmog, f"results/order_{order}_sparse_ddmog")
     else:
         print(f"No order {order} sparse DDMOG found within size limit! (took {end_time - start_time:.2f} seconds)")
 

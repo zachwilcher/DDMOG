@@ -17,23 +17,23 @@ class Solver:
     def __init__(self, coefficients):
         self.coefficients = coefficients
 
-        # list of maximum possible sums on and after each index
+        # list of maximum possible sums on and before each index
         self.maximum_sums = [0] * len(self.coefficients)
         for i in range(len(self.coefficients)):
-            for coefficient in self.coefficients[i:]:
+            for coefficient in self.coefficients[:i+1]:
                 self.maximum_sums[i] += abs(coefficient)
     
     def solve(self, goal, max_vars=None):
         max_vars = len(self.coefficients) if max_vars is None else max_vars
         
         stack = []
-        stack.append((0, np.zeros(len(self.coefficients), dtype=np.int64), 0, 0))
+        stack.append((len(self.coefficients) - 1, np.zeros(len(self.coefficients), dtype=np.int64), 0, 0))
 
         while len(stack) > 0:
             (index, solution, current_sum, nonzero_vars) = stack.pop()
 
 
-            if index == len(solution) or \
+            if index == -1 or \
                 abs(current_sum - goal) > self.maximum_sums[index] or \
                 (nonzero_vars >= max_vars):
                 if current_sum == goal:
@@ -42,19 +42,19 @@ class Solver:
                 # ensure we don't waste time on trying to find
                 # the right number to use when we just multiply 
                 # it with 0.
-                stack.append((index + 1, solution, current_sum, nonzero_vars))
+                stack.append((index - 1, solution, current_sum, nonzero_vars))
             else:
                 #new_solution = np.copy(solution)
                 #new_solution[index] = 0
-                stack.append((index + 1, solution, current_sum, nonzero_vars))
+                stack.append((index - 1, solution, current_sum, nonzero_vars))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = 1
-                stack.append((index + 1, new_solution, current_sum + self.coefficients[index], nonzero_vars + 1))
+                stack.append((index - 1, new_solution, current_sum + self.coefficients[index], nonzero_vars + 1))
 
                 new_solution = np.copy(solution)
                 new_solution[index] = -1
-                stack.append((index + 1, new_solution, current_sum - self.coefficients[index], nonzero_vars + 1))
+                stack.append((index - 1, new_solution, current_sum - self.coefficients[index], nonzero_vars + 1))
 
 class DDMOGIterator:
     def __init__(self, n, max_size=None):
@@ -77,16 +77,18 @@ class DDMOGIterator:
 
         solvers = []
         for i in range(self.n):
-            # [0, 0, ..., 1, 1]
+            # [1, ..., 1, 0, ..., 0]
+            #             ^
+            #      current vertex
             # ignore up to and including the current vertex
-            mask = np.append(np.zeros(i + 1, dtype=np.int64), np.ones(self.n - (i + 1), dtype=np.int64))
+            mask = np.append(np.ones(i, dtype=np.int64), np.zeros(self.n - i, dtype=np.int64))
             coefficient_vector = mask * vertex_labels
             solvers.append(Solver(coefficient_vector))
 
         stack = []
 
-        # start the backtracking at vertex 0 with a goal weight of 0
-        stack.append((0, solvers[0].solve(0), None))
+        # start the backtracking at vertex n-1 with a goal weight of 0
+        stack.append((self.n - 1, solvers[self.n - 1].solve(0), None))
 
         while len(stack) > 0:
             
@@ -96,7 +98,7 @@ class DDMOGIterator:
             if next_solution is None:
                 # no more possible solutions, backtrack
                 stack.pop()
-            elif vertex == (self.n - 1):
+            elif vertex == 0:
                 # found n solutions
                 # the current solution should just be all 0s
                 # but we can build the graph now.
@@ -104,7 +106,9 @@ class DDMOGIterator:
             else:
                 current_size = 0
                 new_goal = 0
-                next_vertex = vertex + 1
+
+                next_vertex = vertex - 1
+
                 for vertex, _, solution in stack:
                     label = vertex_labels[vertex]
                     new_goal -= label * solution[next_vertex]
