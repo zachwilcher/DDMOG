@@ -62,3 +62,8 @@ Found all 296 DDMOGs of order 7 in 0.06 seconds.
 Found all 9930 DDMOGs of order 8 in 2.34 seconds.
 Found all 754804 DDMOGs of order 9 in 242.80 seconds.
 ```
+
+Using the SAT solver approach, some very interesting graphs were found.
+It seems that for n >= 12, there is potentially a family of sparsest DDMOGs with exactly 3n/2 edges 
+formed for n congruent to 0 mod 4. Each of these graphs are 3-regular!
+

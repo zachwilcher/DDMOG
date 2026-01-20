@@ -46,11 +46,15 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
             print("Found a connected DDMOG!")
             save(digraph, f"results/order_{self.n}_ddmog")
             self.stop_search()
+        else:
+            print("Found a DDMOG, but it is not connected.")
+            save(digraph, f"results/order_{self.n}_ddmog_not_connected")
+            self.stop_search()
 
 class Solver2:
     def __init__(self, n, min_degree=1, max_degree=None):
         self.solution = None
-        self. n = n
+        self.n = n
         self.stitched = False
 
         self.min_degree = min_degree
@@ -102,9 +106,8 @@ class Solver2:
             coefficients = np.empty(min(l,r), dtype=np.int64)
             for part in itertools.product([-1, 0, 1], repeat=min(l,r)):
                 coefficients[:] = part
-
                 goal = -np.dot(coefficients, label_vector)
-                gen = solver.solve(goal)
+                gen = solver.solve(goal, max_degree - np.count_nonzero(coefficients))
                 if max(l,r) == l:
                     for left_part in gen:
                         row = np.concatenate((left_part, one_zero_arr, coefficients))
@@ -176,10 +179,6 @@ class Solver2:
         solver.parameters.log_search_progress = True
         solver.parameters.enumerate_all_solutions = True
         status = solver.solve(model, solution_callback)
-
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-
-            print("Found a solution!")
 
         self.stitched = True           
 

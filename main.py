@@ -71,13 +71,9 @@ def find_sparse_ddmog(max_size):
 
 
 
-order = 13
-max_size = math.ceil(3 * order / 2) + 1
-obj = Solver2(order)
+order = 36
+max_size = math.ceil(3 * order / 2)
+obj = Solver2(order, 3, 3)
 print(f"Created solver with {sum(map(len,obj.rows))} rows")
 print("Stitching...")
-digraph = obj.stitch(max_size)
-
-if digraph is not None:
-    print(check_magic(digraph))
-    save(digraph, f"results/order_{order}_ddmog")
+obj.stitch(max_size)
