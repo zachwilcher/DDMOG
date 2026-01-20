@@ -53,3 +53,12 @@ They remark that they do not account for isomorphic graphs under rotations and r
 
 Conjecture: For each n \neq 6, there is a DDMOG with less than or equal to \ceil(3n/2) + 1 edges.
 Data up to n = 11 supports it.
+
+After some optimizations, here is the speed as of 19 Jan 2026.
+```
+Found all 6 DDMOGs of order 5 in 0.32 seconds.
+Found all 22 DDMOGs of order 6 in 0.00 seconds.
+Found all 296 DDMOGs of order 7 in 0.06 seconds.
+Found all 9930 DDMOGs of order 8 in 2.34 seconds.
+Found all 754804 DDMOGs of order 9 in 242.80 seconds.
+```

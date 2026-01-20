@@ -109,10 +109,12 @@ class DDMOGIterator:
 
                 next_vertex = vertex - 1
 
+                # we could compute goal and size incrementally for another speedup
                 for vertex, _, solution in stack:
                     label = vertex_labels[vertex]
                     new_goal -= label * solution[next_vertex]
                     current_size += np.count_nonzero(solution)
+
                 new_solver = solvers[next_vertex].solve(-new_goal, self.max_size - current_size)
                 stack.append((next_vertex, new_solver, None))
                 
