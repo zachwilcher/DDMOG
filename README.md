@@ -52,7 +52,7 @@ However, 9930 on order 8 is different from the reported 8240 in that paper.
 They remark that they do not account for isomorphic graphs under rotations and reflections.
 
 Conjecture: For each n \neq 6, there is a DDMOG with less than or equal to \ceil(3n/2) + 1 edges.
-Data up to n = 11 supports it.
+Data up to n = 15 supports it.
 
 After some optimizations, here is the speed as of 19 Jan 2026.
 ```

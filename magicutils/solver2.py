@@ -45,6 +45,7 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
         if is_connected(digraph):
             print("Found a connected DDMOG!")
             save(digraph, f"results/order_{self.n}_ddmog")
+            self.stop_search()
 
 class Solver2:
     def __init__(self, n, min_degree=1, max_degree=None):
@@ -172,7 +173,7 @@ class Solver2:
         solver = cp_model.CpSolver()
         solution_callback = SolutionCallback(choice_vars, self.rows, self.n)
 
-        # solver.parameters.log_search_progress = True
+        solver.parameters.log_search_progress = True
         solver.parameters.enumerate_all_solutions = True
         status = solver.solve(model, solution_callback)
 
