@@ -30,10 +30,6 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 ```
 
 
-## Notes
-Dr. Aceska thinks that the sparsest DDMOG on order 9 has 16 edges.
-Our code found a DDMOG of order 9 with 15 edges.
-
 ## Experiments
 
 As of 16 Jan 2026, here is the speed of the current algorithm.
@@ -67,3 +63,6 @@ Using the SAT solver approach, some very interesting graphs were found.
 It seems that for n >= 12, there is potentially a family of sparsest DDMOGs with exactly 3n/2 edges 
 formed for n congruent to 0 mod 4. Each of these graphs are 3-regular!
 
+## Ideas
+
+Constrain the number of degree 4 vertices, not just the size of the graph.

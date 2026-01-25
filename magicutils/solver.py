@@ -8,6 +8,7 @@ class Solver:
         self.coefficients = coefficients
     
     def solve(self, goal, max_vars=None):
+        """max_vars is the maximum number of non-zero variables in the solution."""
         raise NotImplementedError("Subclasses must implement this method.")
 
 class BacktrackingSolverImpl(Solver):
@@ -54,10 +55,52 @@ class BacktrackingSolverImpl(Solver):
                 new_solution[index] = -1
                 stack.append((index - 1, new_solution, current_sum - self.coefficients[index], nonzero_vars + 1))
 
-class MusserSumsetImpl(Solver):
+class SumsetSolverImpl(Solver):
+    """Variation of David Musser's algorithm for solving the subset sum problem 
+    as described on pg. 33 in their PhD thesis: Algorithms for Polynomial Factorization"""
     def __init__(self, coefficients):
         super().__init__(coefficients)
+        self.generate_sumsets()
+
+
+    def generate_sumsets(self):
+        self.sumsets = []
+
+        self.sumsets.append(set([0]))
+
+        for i, coefficient in enumerate(self.coefficients):
+            new_sumset = set()
+            for s in self.sumsets[i]:
+                new_sumset.add(s)
+                new_sumset.add(s + coefficient)
+                new_sumset.add(s - coefficient)
+            self.sumsets.append(new_sumset)
     
     def solve(self, goal, max_vars=None):
-        # TODO
-        pass
+
+        stack = []
+
+        stack.append((len(self.coefficients) - 1, 0, np.zeros(len(self.coefficients), dtype=np.int64), 0))
+
+        while len(stack) > 0:
+            
+            (index, current_sum, solution, nonzero_vars) = stack.pop()
+            if (index == -1) or (nonzero_vars >= max_vars):
+                if current_sum == goal:
+                    yield solution
+            elif self.coefficients[index] == 0:
+                # Don't waste time determining possibilities with 0 coefficient
+                stack.append((index - 1, current_sum, solution, nonzero_vars))
+            else:
+                if goal - (current_sum + self.coefficients[index]) in self.sumsets[index]:
+                    new_solution = np.copy(solution)
+                    new_solution[index] = 1
+                    stack.append((index - 1, current_sum + self.coefficients[index], new_solution, nonzero_vars + 1))
+                
+                if goal - (current_sum - self.coefficients[index]) in self.sumsets[index]:
+                    new_solution = np.copy(solution)
+                    new_solution[index] = -1
+                    stack.append((index - 1, current_sum - self.coefficients[index], new_solution, nonzero_vars + 1))
+                
+                if goal - (current_sum) in self.sumsets[index]:
+                    stack.append((index - 1, current_sum, new_solution, nonzero_vars))
