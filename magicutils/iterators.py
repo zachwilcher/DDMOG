@@ -30,10 +30,10 @@ class DiGraphEdgePermutator:
                     new_graph.reverse_edge(edge[0], edge[1])
             yield new_graph
 
-class PossibleGraphIterator:
-    def __init__(self, n, staring_size = 0, ending_size=None):
+class OrientedGraphIterator:
+    def __init__(self, n, starting_size = 0, ending_size=None):
         self.n = n
-        self.starting_size = staring_size
+        self.starting_size = starting_size
         self.ending_size = ending_size
 
         self.graph = DiGraph()
@@ -52,7 +52,7 @@ class PossibleGraphIterator:
         
 
     def __iter__(self):
-        """Iterate through all possible directed graphs on n vertices."""
+        """Iterate through all possible oriented graphs on n vertices."""
 
         for size in range(self.starting_size, self.ending_size + 1, 1):
 

@@ -2,21 +2,14 @@
 import itertools
 from sage.graphs.digraph import DiGraph
 import numpy as np
-from pathlib import Path
 
 from sage.graphs.connectivity import is_connected
-
-from magicutils.ddmog_iterator import Solver
+from magicutils.solver import BacktrackingSolverImplSolver as Solver
+from magicutils.check_magic import save
 
 from ortools.sat.python import cp_model
 import math
 
-def save(digraph, name):
-
-    with open(Path(f"{name}.txt"), "w") as f:
-        f.write(digraph.adjacency_matrix().str())
-    plot = digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
-    plot.save(f"{name}.png")
 
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
     def __init__(self, choice_vars, rows, n):
@@ -24,8 +17,10 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
         self.choice_vars = choice_vars
         self.rows = rows
         self.n = n
+        self.solutions = 0
 
     def on_solution_callback(self):
+        self.solutions += 1
         digraph = DiGraph()
         digraph.add_vertices(range(self.n))
         for vertex in digraph.vertex_iterator():
@@ -42,14 +37,16 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
                 elif edge_orientation == -1:
                     digraph.add_edge(other_vertex, vertex)
         
-        if is_connected(digraph):
-            print("Found a connected DDMOG!")
-            save(digraph, f"results/order_{self.n}_ddmog")
-            self.stop_search()
-        else:
-            print("Found a DDMOG, but it is not connected.")
-            save(digraph, f"results/order_{self.n}_ddmog_not_connected")
-            self.stop_search()
+        print(f"Found solution #{self.solutions}:")
+        save(digraph, f"results3/order_{self.n}_{self.solutions}")
+        #if is_connected(digraph):
+            #print("Found a connected DDMOG!")
+            #save(digraph, f"results3/order_{self.n}_ddmog")
+            #self.stop_search()
+        #else:
+            #print("Found a DDMOG, but it is not connected.")
+            #save(digraph, f"results3/order_{self.n}_ddmog_not_connected")
+            #self.stop_search()
 
 class Solver2:
     def __init__(self, n, min_degree=1, max_degree=None):

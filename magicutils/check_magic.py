@@ -3,6 +3,14 @@ Module for checking if digraphs labeled with integers satisfy DDMOG conditions.
 All digraphs are assumed to have vertices be the integers 0 through n-1!!!
 """
 
+from pathlib import Path
+
+def save(digraph, name):
+    with open(Path(f"{name}.txt"), "w") as f:
+        f.write(digraph.adjacency_matrix().str())
+    plot = digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
+    plot.save(f"{name}.png")
+
 def get_weights(digraph):
     weights = [0 for _ in range(digraph.order())]
 
@@ -31,5 +39,3 @@ def get_graph_imbalance(digraph):
     max_imbalance = max(imbalances)
     return max_imbalance
     
-
- 
