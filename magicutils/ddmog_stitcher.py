@@ -4,7 +4,7 @@ from sage.graphs.digraph import DiGraph
 import numpy as np
 
 from sage.graphs.connectivity import is_connected
-from magicutils.solver import BacktrackingSolverImplSolver as Solver
+from magicutils.solver import SumsetSolverImpl as Solver
 from magicutils.check_magic import save
 
 from ortools.sat.python import cp_model

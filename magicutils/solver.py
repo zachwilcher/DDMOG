@@ -12,6 +12,10 @@ class Solver:
         raise NotImplementedError("Subclasses must implement this method.")
 
 class BacktrackingSolverImpl(Solver):
+    """Standard backtracking algorithm for solving the subset sum problem.
+    The algorithm is described in Computing Partitions with Applications to the
+    Knapsack Problem by Ellis Horowitz and Sartaj Sahni.
+    """
     def __init__(self, coefficients):
         super().__init__(coefficients)
 
@@ -22,7 +26,7 @@ class BacktrackingSolverImpl(Solver):
                 self.maximum_sums[i] += abs(coefficient)
     
     def solve(self, goal, max_vars=None):
-        """"""
+        """Solve the subset sum problem with an optional limit on the number of non-zero variables in the final solution."""
         max_vars = len(self.coefficients) if max_vars is None else max_vars
         
         stack = []
@@ -57,11 +61,11 @@ class BacktrackingSolverImpl(Solver):
 
 class SumsetSolverImpl(Solver):
     """Variation of David Musser's algorithm for solving the subset sum problem 
-    as described on pg. 33 in their PhD thesis: Algorithms for Polynomial Factorization"""
+    as described on pg. 33 in their PhD thesis: Algorithms for Polynomial Factorization.
+    """
     def __init__(self, coefficients):
         super().__init__(coefficients)
         self.generate_sumsets()
-
 
     def generate_sumsets(self):
         self.sumsets = []
@@ -78,6 +82,7 @@ class SumsetSolverImpl(Solver):
     
     def solve(self, goal, max_vars=None):
 
+        max_vars = len(self.coefficients) if max_vars is None else max_vars
         stack = []
 
         stack.append((len(self.coefficients) - 1, 0, np.zeros(len(self.coefficients), dtype=np.int64), 0))
@@ -103,4 +108,4 @@ class SumsetSolverImpl(Solver):
                     stack.append((index - 1, current_sum - self.coefficients[index], new_solution, nonzero_vars + 1))
                 
                 if goal - (current_sum) in self.sumsets[index]:
-                    stack.append((index - 1, current_sum, new_solution, nonzero_vars))
+                    stack.append((index - 1, current_sum, solution, nonzero_vars))

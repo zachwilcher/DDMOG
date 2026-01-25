@@ -11,7 +11,7 @@ that we need to reduce to 0.
 import numpy as np
 from sage.graphs.digraph import DiGraph
 import math
-from magicutils.solver import BacktrackingSolverImpl as Solver
+from magicutils.solver import SumsetSolverImpl as Solver
 
 class DDMOGIterator:
     def __init__(self, n, max_size=None):
