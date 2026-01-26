@@ -10,17 +10,29 @@ import math
 import time
 
 
-class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self, choice_vars, rows, n, callback):
+class DDMOGStitcherCallback:
+    def __init__(self, cp_solver_callback):
+        self.cp_solver_callback = cp_solver_callback
+    
+    def stop_search(self):
+        self.cp_solver_callback.stop_search()
+
+    def __call__(self, digraph):
+        # override me!
+        pass
+
+
+
+class DDMOGStitcherCpSolverSolutionCallback(cp_model.CpSolverSolutionCallback):
+    def __init__(self, choice_vars, rows, n, callback_factory):
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.choice_vars = choice_vars
         self.rows = rows
         self.n = n
-        self.solutions = 0
-        self.callback = callback
+        self.callback_factory = callback_factory
+        self.callback = callback_factory(self)
 
     def on_solution_callback(self):
-        self.solutions += 1
         digraph = DiGraph()
         digraph.add_vertices(range(self.n))
         for vertex in digraph.vertex_iterator():
@@ -83,11 +95,9 @@ class DDMOGStitcher:
                 
 
 
-    def stitch(self, max_size=None, solution_callback=None):
+    def stitch(self, max_size=None, callback_factory=DDMOGStitcherCallback, max_time=None):
         start_time = time.time()
         
-        if solution_callback is None:
-            solution_callback = lambda digraph: None
 
         if max_size is None:
             max_size = math.comb(self.n, 2)
@@ -134,10 +144,13 @@ class DDMOGStitcher:
 
 
         solver = cp_model.CpSolver()
-        solution_callback = SolutionCallback(choice_vars, self.rows, self.n, solution_callback)
+        
+        solution_callback = DDMOGStitcherCpSolverSolutionCallback(choice_vars, self.rows, self.n, callback_factory)
 
         #solver.parameters.log_search_progress = True
         solver.parameters.enumerate_all_solutions = True
+        if max_time is not None:
+            solver.parameters.max_time_in_seconds = max_time
 
         #print(f"SAT solver began in  {time.time() - start_time:.2f} seconds...")
         solver.solve(model, solution_callback)

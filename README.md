@@ -65,7 +65,7 @@ Found all 9930 DDMOGs of order 8 in 2.13 seconds.
 Found all 754804 DDMOGs of order 9 in 228.15 seconds.
 ```
 
-# Stitching with SAT Solver
+## Stitching with SAT Solver
 Using the SAT solver approach, some very interesting graphs were found.
 It seems that for n >= 12, there is potentially a family of sparsest DDMOGs with exactly 3n/2 edges 
 formed for n congruent to 0 mod 4. Each of these graphs are 3-regular!
@@ -73,3 +73,6 @@ formed for n congruent to 0 mod 4. Each of these graphs are 3-regular!
 ## Ideas
 
 Constrain the number of degree 4 vertices, not just the size of the graph.
+
+
+`https://houseofgraphs.org/graphs/32533`

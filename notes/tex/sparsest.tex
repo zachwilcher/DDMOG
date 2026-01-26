@@ -1,0 +1,37 @@
+\section{Sparsity}
+
+\begin{proposition}
+    A DDMOG of order \(n\) must have at least \(\ceil{\frac{3n}{2}}\) edges.
+\end{proposition}
+\begin{proof}
+    Property 1 shown in \cite{altman2024difference} states that each vertex in a graph
+    with a DDM labeling must have degree at least \(3\).
+    So, if \(G\) has a DDM labeling, then
+    \[
+    2\abs{E(G)} = \sum_{v \in V(G)} \deg(v) \ge \sum_{v \in V(G)} 3 = 3n.
+    \]
+    Since the number of edges must be an integer, it follows that
+    \(\abs{E(G)} \ge \ceil{\frac{3n}{2}}\).
+\end{proof}
+
+
+\begin{conjecture}
+If \(n \ge 10\) and \(n \not \equiv 2 \pmod{4}\), then there exists a DDMOG of order \(n\)
+with exactly \(\ceil{\frac{3n}{2}}\) edges.
+\end{conjecture}
+
+
+\begin{definition}
+    \(H\) is the order \(10\) graph
+    that is two triangles with their vertices attached to the finger tips of \(K_{1,3}\).
+\end{definition}
+
+\begin{conjecture}
+    If \(n \equiv 0 \pmod{4}\) and \(n = 6x + 10\) for some positive integer \(x\),
+    then \(x C_6^{1,3} \cup H\) is DDMO.
+\end{conjecture}
+
+\begin{conjecture}
+    If \(n \equiv 0 \pmod{12}\), then
+    \(\frac{n}{6}C_6^{1,3}\) is DDMO.
+\end{conjecture}
