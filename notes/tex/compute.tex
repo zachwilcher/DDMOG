@@ -17,6 +17,58 @@ are \(2^k\) possible orientations of those edges.
 Using the binomial theorem, the resulting sum can be simplified.
 \end{proof}
 
-So, an algorithm that checks if every possible oriented graph is magic is at least \(O(3^{n^2})\).
+So, an algorithm that checks if every possible oriented graph on \(n\) vertices is DDM is at least \(O(3^{\binom{n}{2}})\).
 If 50000 graphs can be checked in 1 second, then to check every graph on 7 vertices
 we would need at least 58 hours.
+
+To more efficiently find all DDMOGs, we can reduce the search space by looking more closely at the requirement
+for a labeled oriented graph to be DDM.
+Suppose \(\vec{G}\) is an order \(n\) oriented graph with a labeling \(\ell: V(\vec{G}) \rightarrow \{1, 2, \cdots, n\}\)
+and adjacency matrix \(A = (a_{i,j})\).
+We use the convention that \(a_{i,j} = 1\) if \(v_i\) is directed at \(v_j\) and \(a_{i,j} = 0\) otherwise.
+For any vertex \(v_i\), we then have the following equation.
+\begin{equation}
+    \label{eqn:weight_equation}
+    \wt(v_i) = \sum_{j=1}^n (a_{j,i}-a_{i,j}) \ell(v_j)
+\end{equation}
+All \(n\) equations then can be expressed as
+\begin{equation}
+    \label{eqn:matrix_weight_equation}
+\vec{w} = (A^{T} - A)\vec{x}
+\end{equation}
+where \(\vec{x}\) is the label column vector \([\ell(v_1), \ell(v_2), \cdots, \ell(v_n)]^{T}\)
+and \(\vec{w}\) is the weight vector \([\wt(v_1), \wt(v_2), \cdots, \wt(v_n)]^T\).
+
+Let \(S = A^{T} - A\) and \(\vec{s}_i\) be the \(i\)th column of \(S\).
+Since \(S\) is symmetric, Equation \ref{eqn:weight_equation} can then be expressed concisely
+as \(\vec{s}_i \cdot \vec{x} = \wt(v_i)\).
+This sort of notation is used extensively in \cite{aceska2026newresults}.
+
+We make some remarks
+\begin{enumerate}
+\item If \((\vec{G}, \ell)\) is DDM, then \(\wt(v_i) = 0\) (see Theorem 1 in \cite{altman2024difference}),
+Equation \ref{eqn:weight_equation} is just \(\vec{s_i} \cdot \vec{x} = 0\).
+
+\item The components of \(\vec{s}_i\) belong to \(\{-1, 0, 1\}\).
+
+\item By identifying \(V(\vec{G}) = \{v_1, \cdots, v_n\}\) such that \(\ell(v_i) = i\), the label vector
+is \(\vec{x} = [1, 2, \cdots, n]^T\).
+\end{enumerate}
+
+With this information, we can rephrase Equation \ref{eqn:weight_equation} once more as
+\begin{equation}
+    \label{eqn:skew_weight_equation}
+0 = \sum_{j=1}^n j \cdot s_{i, j}
+\end{equation}
+So, if we wish to know what the possible ways are to add oriented edges incident to \(v_i\)
+we need to find a collection of \(n\) numbers \(\{s_{i,j}\}_{j=1}^n\) each chosen from
+\(\{-1, 0, 1\}\) such that \(s_{i, i} = 0\) and Equation \ref{eqn:skew_weight_equation} holds.
+
+This is a variation of the famous subset sum problem that asks is there a way to
+select a subset of numbers from a given set such that their sum is equal to some target number.
+In our case, we want to select numbers from the set \(\{1, 2, \cdots, n\}\)
+such that the sum is zero. However, we also consider the possibility of selecting the negative of each number from our set.
+The fastest known algorithms for solving the subset sum problem run in exponential time.
+Although, this is much faster than checking every possible oriented graph on \(n\) vertices.
+
+

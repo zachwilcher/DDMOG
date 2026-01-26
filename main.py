@@ -1,22 +1,12 @@
 from sage.graphs.connectivity import is_connected
-from magicutils.graphs import create_bipartite
-from magicutils.check_magic import check_magic
 from magicutils.ddmog_iterator import DDMOGIterator
-from magicutils.solver2 import Solver2
-import numpy as np
+from magicutils.ddmog_stitcher import DDMOGStitcher
 import time
-from pathlib import Path
 import math
-
-def save(digraph, name):
-
-    with open(Path(f"{name}.txt"), "w") as f:
-        f.write(digraph.adjacency_matrix().str())
-    plot = digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
-    plot.save(f"{name}.png")
 
 def find_sparsest_ddmog(order):
 
+    print(f"Searching for the sparsest DDMOG of order {order}...")
     start_time = time.time()
     sparsest_digraph = None
     ddmogs = 0
@@ -26,54 +16,28 @@ def find_sparsest_ddmog(order):
             if (sparsest_digraph is None) or (digraph.size() < sparsest_digraph.size()):
                 sparsest_digraph = digraph
     
-        if ddmogs % 100000 == 0:
-            print(f"Found {ddmogs} DDMOGs...")
+        if (ddmogs > 0) and (ddmogs % 100000 == 0):
+            print(f"Found {ddmogs} DDMOGs in {time.time() - start_time:.2f} seconds...")
     
-    end_time = time.time()
+    print(f"Found all {ddmogs} DDMOGs of order {order} in {time.time() - start_time:.2f} seconds.")
     
-    print(f"Found all {ddmogs} DDMOGs of order {order} in {end_time - start_time:.2f} seconds.")
-    
-    #save(sparsest_digraph, f"sparsest_order_{order}_ddmog")
 
+#for order in range(5, 10):
+#    find_sparsest_ddmog(order)
 
-
-def find_sparse_ddmog(max_size):
-    min_order = 5
-    max_order = 20
-
-    for order in range(min_order, max_order + 1):
-
-        order_index = order - min_order
-        sparse_ddmog = None
-
-        total_oriented_graphs = 3 ** (math.comb(order, 2))
-
-        iterations = 0
-        start_time = time.time()
-        for digraph in DDMOGIterator(order, max_size):
-            iterations += 1
-            if is_connected(digraph):
-                sparse_ddmog = digraph
-                break
-            if iterations % 1000000 == 0:
-                print(f"Processed {iterations} graphs in {time.time() - start_time:.2f} seconds...")
-
-        end_time = time.time()
-        if sparse_ddmog is not None:
-            print(f"Found a order {order} sparse DDMOG in {end_time - start_time:.2f} seconds.")
-            #save(sparse_ddmog, f"results/order_{order}_sparse_ddmog")
-        else:
-            print(f"No order {order} sparse DDMOG found within size limit! (took {end_time - start_time:.2f} seconds)")
-
-        #save(sparsest_ddmog, f"results/order_{order}_sparsest__ddmog")
-        #save(coarsest_ddmog, f"results/order_{order}_coarsest_ddmog")
-        #save(highest_degree_ddmog, f"results/order_{order}_highest_degree_ddmog")
-
-
-
-order = 36
-max_size = math.ceil(3 * order / 2)
-obj = Solver2(order, 3, 3)
-print(f"Created solver with {sum(map(len,obj.rows))} rows")
-print("Stitching...")
-obj.stitch(max_size)
+order = 8
+#max_size = math.ceil(3 * order / 2) 
+start_time = time.time()
+stitcher = DDMOGStitcher(order)
+print(f"Initialized DDMOG stitcher in {time.time() - start_time:.2f} seconds.")
+start_time = time.time()
+solution_count = 0
+def callback(digraph):
+    global start_time
+    global solution_count
+    if is_connected(digraph):
+        solution_count += 1
+        #print(f"Found {solution_count} DDMOGs of order {order} in {time.time() - start_time:.2f} seconds")
+stitcher.stitch(None, callback)
+print(f"Completed stitching in {time.time() - start_time:.2f} seconds.")
+print(f"Found {solution_count} DDMOGs of order {order}.")

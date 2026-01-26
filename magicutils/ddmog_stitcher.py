@@ -1,23 +1,23 @@
 
-import itertools
 from sage.graphs.digraph import DiGraph
 import numpy as np
 
-from sage.graphs.connectivity import is_connected
 from magicutils.solver import SumsetSolverImpl as Solver
-from magicutils.check_magic import save
 
 from ortools.sat.python import cp_model
 import math
 
+import time
+
 
 class SolutionCallback(cp_model.CpSolverSolutionCallback):
-    def __init__(self, choice_vars, rows, n):
+    def __init__(self, choice_vars, rows, n, callback):
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.choice_vars = choice_vars
         self.rows = rows
         self.n = n
         self.solutions = 0
+        self.callback = callback
 
     def on_solution_callback(self):
         self.solutions += 1
@@ -37,30 +37,21 @@ class SolutionCallback(cp_model.CpSolverSolutionCallback):
                 elif edge_orientation == -1:
                     digraph.add_edge(other_vertex, vertex)
         
-        print(f"Found solution #{self.solutions}:")
-        save(digraph, f"results3/order_{self.n}_{self.solutions}")
-        #if is_connected(digraph):
-            #print("Found a connected DDMOG!")
-            #save(digraph, f"results3/order_{self.n}_ddmog")
-            #self.stop_search()
-        #else:
-            #print("Found a DDMOG, but it is not connected.")
-            #save(digraph, f"results3/order_{self.n}_ddmog_not_connected")
-            #self.stop_search()
+        self.callback(digraph)
 
-class Solver2:
-    def __init__(self, n, min_degree=1, max_degree=None):
+class DDMOGStitcher:
+    def __init__(self, n, min_degree=3, max_degree=None):
         self.solution = None
         self.n = n
-        self.stitched = False
+        self.magic_constant = 0
 
         self.min_degree = min_degree
+
         if max_degree is None:
             max_degree = n - 1
         self.max_degree = max_degree
 
         solvers = []
-        label_vectors = []
 
         # possible rows in the skew adjacency matrix of a DDMOG
         self.rows = []
@@ -73,59 +64,31 @@ class Solver2:
 
             label = i + 1
 
-            # number of columns to the left and right of column i
-            l = i
-            r = (n - 1) - i
-
             left_label_vector = np.fromiter(range(1, label), dtype=np.int64)
             right_label_vector = np.fromiter(range(label + 1, self.n + 1), dtype=np.int64)
-
-            solver = None
-            if max(l, r) == l:
-                solver = Solver(left_label_vector)
-                label_vectors.append(right_label_vector)
-            else:
-                solver = Solver(right_label_vector)
-                label_vectors.append(left_label_vector)
+            zero_vector = np.array([0], dtype=np.int64)
+            label_vector = np.concatenate((left_label_vector, zero_vector, right_label_vector))
+            solver = Solver(label_vector)
             solvers.append(solver)
-
-        # an array with a single 0. 
-        one_zero_arr = np.zeros(1, dtype=np.int64)
 
         for i in range(n):
             
-            # number of columns to the left and right of column i
-            l = i
-            r = (n - 1) - i
-
             solver = solvers[i]
-            label_vector = label_vectors[i]
-            coefficients = np.empty(min(l,r), dtype=np.int64)
-            for part in itertools.product([-1, 0, 1], repeat=min(l,r)):
-                coefficients[:] = part
-                goal = -np.dot(coefficients, label_vector)
-                gen = solver.solve(goal, max_degree - np.count_nonzero(coefficients))
-                if max(l,r) == l:
-                    for left_part in gen:
-                        row = np.concatenate((left_part, one_zero_arr, coefficients))
-                        nonzero = np.count_nonzero(row)
-                        if nonzero >= self.min_degree and nonzero <= self.max_degree:
-                            self.rows[i].append(row)
-                            self.degrees[i].append(nonzero)
-                else:
-                    for right_part in gen:
-                        row = np.concatenate((coefficients, one_zero_arr, right_part))
-                        nonzero = np.count_nonzero(row)
-                        if nonzero >= self.min_degree and nonzero <= self.max_degree:
-                            self.rows[i].append(row)
-                            self.degrees[i].append(nonzero)
+
+            for row in solver.solve(self.magic_constant, self.max_degree):
+                nonzero = np.count_nonzero(row)
+                if (nonzero >= self.min_degree):
+                    self.rows[i].append(row)
+                    self.degrees[i].append(nonzero)
                 
 
 
-    def stitch(self, max_size=None):
-        if self.stitched is True:
-            return None
+    def stitch(self, max_size=None, solution_callback=None):
+        start_time = time.time()
         
+        if solution_callback is None:
+            solution_callback = lambda digraph: None
+
         if max_size is None:
             max_size = math.comb(self.n, 2)
 
@@ -171,12 +134,12 @@ class Solver2:
 
 
         solver = cp_model.CpSolver()
-        solution_callback = SolutionCallback(choice_vars, self.rows, self.n)
+        solution_callback = SolutionCallback(choice_vars, self.rows, self.n, solution_callback)
 
-        solver.parameters.log_search_progress = True
+        #solver.parameters.log_search_progress = True
         solver.parameters.enumerate_all_solutions = True
-        status = solver.solve(model, solution_callback)
 
-        self.stitched = True           
+        #print(f"SAT solver began in  {time.time() - start_time:.2f} seconds...")
+        solver.solve(model, solution_callback)
 
 
