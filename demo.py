@@ -12,18 +12,17 @@ def find_sparsest_ddmog(order):
     sparsest_digraph = None
     ddmogs = 0
     for digraph in DDMOGIterator(order):
-        #if is_connected(digraph):
-        ddmogs += 1
-        if (sparsest_digraph is None) or (digraph.size() < sparsest_digraph.size()):
-            sparsest_digraph = digraph
+        if is_connected(digraph):
+            ddmogs += 1
+            if (sparsest_digraph is None) or (digraph.size() < sparsest_digraph.size()):
+                sparsest_digraph = digraph
     
-        if (ddmogs > 0) and (ddmogs % 500000 == 0):
-            print(f"Found {ddmogs} DDMOGs of order {order} in {time.time() - start_time:.2f} seconds...")
+            if (ddmogs > 0) and (ddmogs % 100000 == 0):
+                print(f"Found {ddmogs} DDMOGs of order {order} in {time.time() - start_time:.2f} seconds...")
     
     print(f"Found all {ddmogs} DDMOGs of order {order} in {time.time() - start_time:.2f} seconds.")
     
 
-print("\n\n\n\n\n\n\n")
 print("Searching for sparsest DDMOGs with orders 5 to 9 by iterating over all DDMOGs.")
 print("---------------------------------------------------------------")
 for order in range(5, 10):
