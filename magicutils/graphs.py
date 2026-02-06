@@ -7,6 +7,7 @@ where n is the order of the graph.
 from sage.graphs.digraph import DiGraph
 import itertools
 from magicutils.check_magic import get_vertex_imbalance, get_graph_imbalance
+from magicutils.skolem import skolem
 
 def create_bipartite(m, n):
     """Requires (m + n)*(m + n + 1) % 4 == 0 and m >= 3 and n >= 3. 
@@ -109,3 +110,70 @@ def balance_ddmog(digraph):
     return new_digraph
 
 
+def disjoint_bipartite(x):
+    """\
+    Assumes x \ge 1
+    Create a DDMOG consisting of x disjoint pairs of K_{3,3}
+    using a skolem sequence of order 4x
+    """
+
+    seq = skolem(4*x)
+    # see Dinitz' combinatorial handbook page 614: solution to Heffter's first difference problem
+    # for this construction. We rearrange things so that the equation is
+    # a - b - c = 0
+    equations = [(pair[1], pair[0], pair[1] - pair[0]) for  pair in seq]
+
+
+    digraph = DiGraph()
+    digraph.add_vertices(range(6 * 2 * x))
+
+    # 1. Partition the vertices into groups of 12
+    # 2. For each group of 12, distribute the labels onto a pair of K_{3,3}'s 
+    # with orientation and labeling based on base case.
+    # 3. ????
+    # 4. Profit
+
+    for pair_index in range(x):
+        vertices = [pair_index * 12 + i for i in range(12)]
+        equation_indices = [pair_index * 4 + i for i in range(4)]
+
+        # ---- base case ----
+        # vertex ~ weight expression ~ "signed equation index"
+        # 1  ~ -12 +  8 + 4 ~ -1
+        # 4  ~  11 - 10 - 1 ~  2
+        # 8  ~  11 - 10 - 1 ~  2
+        # 10 ~ -12 + 8 +  4 ~ -1
+        # 11 ~  12 - 8 -  4 ~  1
+        # 12 ~ -11 + 10 + 1 ~ -2
+        #
+        # 2  ~ -9 + 6 + 3 ~ -3
+        # 3  ~  7 - 5 - 2 ~  4
+        # 5  ~ -9 + 6 + 3 ~ -3
+        # 6  ~  7 - 5 - 2 ~  4
+        # 7  ~  9 - 6 - 3 ~  3
+        # 9  ~ -7 + 5 - 2 ~ -4
+
+        # by default an equation is a - b - c = 0
+        # so if we want to use equation j to determine
+        # the edges vertex i connects to, the edges are: 
+        # (equations[j][0], vertices[i]), (vertices[i], equations[j][1]), (vertices[i], equations[j][2])
+        # otherwise if the equation index is negative, reverse each of these edges.
+        
+        # TODO: this is a magic constant... perhaps we can compute these numbers based on some
+        # order 12 minimal sparsity DDMOG passed to the function?
+        signed_equation_indices = [-1, -3, 4, 2, -3, 4, 3, 2, -4, -1, 1, -2]
+
+        for v in vertices:
+            # determine which of equation 1, 2, 3, or 4 we should use for vertex v
+            local_equation_index = abs(signed_equation_indices[v % 12]) - 1
+            # get which vertices this equation tells us to connect v to
+            (a,b,c) = equations[equation_indices[local_equation_index]]
+            # determine which orientation of the edges to use
+            if signed_equation_indices[v % 12] > 0:
+                edges = [(a, v), (v, b), (v, c)]
+                digraph.add_edges(edges)
+            else:
+                edges = [(v, a), (b, v), (c, v)]
+                digraph.add_edges(edges)
+
+    return digraph

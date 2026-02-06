@@ -72,3 +72,6 @@ Some additional constraints that might interesting to explore are
 - Searching for k-regular DDMO graphs when k > 3.
 - Searching for the "coarsest" DDMOGs by maximizing the number of edges.
 - Generalizing to labels taken from finitely generated abelian groups.
+
+
+### Future

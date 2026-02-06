@@ -37,12 +37,12 @@ class OrientedGraphIterator:
         self.ending_size = ending_size
 
         self.graph = DiGraph()
-        for i in range(1, self.n + 1, 1):
+        for i in range(self.n):
             self.graph.add_vertex(i)
         
         self.possible_edges = []
-        for x in range(1, self.n + 1, 1):
-            for y in range(x + 1, self.n + 1, 1):
+        for x in range(self.n):
+            for y in range(x + 1, self.n):
                 # edge = f"({x},{y})"
                 edge = (x,y)
                 self.possible_edges.append(edge)

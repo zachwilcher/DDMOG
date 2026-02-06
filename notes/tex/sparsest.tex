@@ -15,27 +15,94 @@
 \end{proof}
 
 
-\begin{conjecture}
-If \(n \ge 10\) and \(n \not \equiv 2 \pmod{4}\), then there exists a DDMOG of order \(n\)
-with exactly \(\ceil{\frac{3n}{2}}\) edges.
-\end{conjecture}
-
-
 \begin{definition}
     \(H\) is the order \(10\) graph
-    that is two triangles with their vertices attached to the finger tips of \(K_{1,3}\).
-
+    that is two triangles with their vertices attached to the fingertips of \(K_{1,3}\).
 \end{definition}
 Some further properties of \(H\) are available here: 
 
 \url{https://houseofgraphs.org/graphs/32533}.
 
+
+\begin{definition}
+    \(O\) is the order \(13\) graph
+    that looks kind of like \(H\) but with an additional copy of \(K_{1,3}\)
+    that attaches in a similar way.
+\end{definition}
+
+\begin{definition}
+    \(W_k\) is the wheel on \(k\) vertices.
+\end{definition}
+
 \begin{conjecture}
-    If \(n \equiv 0 \pmod{4}\) and \(n = 6x + 10\) for some positive integer \(x\),
-    then \(x K_{3,3} \cup H\) is DDMO.
+    Let \(x\) be a non-negative integer,
+    then the following families of graphs are DDMO.
+    Furthermore, each graph family has minimal size.
+
+\begin{tabular}{c | c }
+\(n \pmod{12}\) & Family \\
+\hline
+0 & \(2(x + 1) K_{3,3}\) \\
+1 & \(xK_{3,3}\cup O\) \\
+2 & N/A \\
+3 & \(x K_{3,3} \cup H \cup W_4\) \\
+4 & \((x+1) K_{3,3} \cup H\) \\
+5 & \(x K_{3,3} \cup W_4\) \\
+6 & N/A \\
+7 & \((x+1) K_{3,3}\cup O\) \\
+8 & \((x+1) K_{3,3} \cup 2H\) \\
+9 & \((x+1) K_{3,3} \cup H \cup W_4\) \\
+10 & N/A \\
+11 & \((x+1) K_{3,3} \cup W_4\)
+\end{tabular}
 \end{conjecture}
 
 \begin{conjecture}
-    If \(n \equiv 0 \pmod{12}\), then
-    \(\frac{n}{6}K_{3,3}\) is DDMO.
+    There are no DDMOGs of order \(n\)
+    with minimal size when \(n \equiv 2 \pmod{4}\).
 \end{conjecture}
+
+\begin{corollary}
+    If \(n \ge 10\) and \(n \not \equiv 2 \pmod{4}\),
+    then there exists a DDMOG of order \(n\) with minimal size.
+\end{corollary}
+\begin{proof}
+    \(n = 20\) is the only exception to the conjectures above.
+    But, there exists a connected DDMOG of order \(20\) with minimal size.
+\end{proof}
+
+
+
+\begin{proposition}
+Let \(A\) be an \(n/3\) by \(n\) matrix where row \(i\)
+consists of \(3 * (i - 1)\) zeros, followed by \((1, -1, -1)^T\), following by
+\(3 * (n - i)\) more zeros.
+If a permutation of the label vector \((1,2, \cdots, n)^T\) is in the kernel
+of \(A\), then \(n \equiv 0 \pmod{4}\) or \(n \equiv 3 \pmod{4}\).
+\end{proposition}
+
+\begin{proof}
+Note that \(n\) must be a multiple of \(3\) for the matrix multiplication
+to make sense.
+Let \(x\) be the label vector \((1,2,\cdots, n)^T\) and \(P\) be a permutation matrix.
+Let \(u = Px\).
+If \(Au = 0\), then
+\[
+u_{i + 1} - u_{i+2}  - u_{i+3} = 0 \Leftrightarrow u_{i+1} = u_{i+2} + u_{i+3}
+\]
+for any \(i \equiv 0 \pmod{3}\).
+Observe:
+\[
+\sum_{i=1}^n u_i = \sum_{i=1}^n i = \frac{n(n+1)}{2}
+\]
+However,
+\[
+\sum_{i=1}^n u_i = \sum_{i=0}^{n/3} \left(u_{3i + 1} + u_{3i + 2} + u_{3i + 3}\right) = 2 \sum_{i=0}^{n/3} u_{3i + 1}
+\]
+So, \(n(n+1)\) is a multiple of \(4\).
+Suppose \(n = 4q + r\) for \(0 \le r < 4\).
+\[
+n(n+1) = (4q + r)(4q + r + 1) = 16q^2 + 4qr + 4q + 4qr + r^2 + r
+\]
+Notice that \(r^2 + r\) is a multiple of \(4\) only when \(r = 0\) or \(r = 3\).
+\end{proof}
