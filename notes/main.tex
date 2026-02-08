@@ -1,10 +1,15 @@
 \documentclass{article}
 
+
+\usepackage[backend=biber,style=alphabetic]{biblatex}
+\addbibresource{bibliography.bib}
+
 \usepackage{mathtools}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{url}
+\usepackage{tikz}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
@@ -24,7 +29,9 @@
 \newcommand{\wt}{\mathrm{wt}\,}
 \newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
 \newcommand{\abs}[1]{\left| #1 \right|}
-
+\tikzset{
+    labeled_graph_node/.style = {circle, draw=black, fill=white, inner sep = 1.5pt, text=black, minimum size=20pt},
+}
 \begin{document}
 
 \input{tex/compute.tex}
@@ -32,9 +39,8 @@
 %\input{tex/odm.tex}
 %\input{tex/product.tex}
 
-{
-\bibliographystyle{plain}
-\bibliography{bibliography.bib}
-}
+
+
+\printbibliography
 
 \end{document}

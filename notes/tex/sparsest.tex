@@ -4,7 +4,7 @@
     A DDMOG of order \(n\) must have at least \(\ceil{\frac{3n}{2}}\) edges.
 \end{proposition}
 \begin{proof}
-    Property 1 shown in \cite{altman2024difference} states that each vertex in a graph
+    Property 1 shown in \cite{altmanDifferenceDistanceMagic2024} states that each vertex in a graph
     with a DDM labeling must have degree at least \(3\).
     So, if \(G\) has a DDM labeling, then
     \[
@@ -105,4 +105,72 @@ Suppose \(n = 4q + r\) for \(0 \le r < 4\).
 n(n+1) = (4q + r)(4q + r + 1) = 16q^2 + 4qr + 4q + 4qr + r^2 + r
 \]
 Notice that \(r^2 + r\) is a multiple of \(4\) only when \(r = 0\) or \(r = 3\).
+\end{proof}
+
+\begin{proposition}
+    Let \(x\) be any non-negative integer.
+    \(2(x+1)K_{3,3}\) is DDMO.
+\end{proposition}
+
+\begin{proof}
+    Consider the orientation of \(K_{3,3}\) in Figure \ref{fig:oriented_K_3,3}.
+    \begin{figure}[h!]
+        \centering
+        \begin{tikzpicture}
+            \node [labeled_graph_node] (v4) at (0, 0) {\(v_4\)};
+            \node [labeled_graph_node] (v5) at (1.5, 0) {\(v_5\)};
+            \node [labeled_graph_node] (v6) at (3, 0) {\(v_6\)};
+            \node [labeled_graph_node] (v1) at (0, 1.5) {\(v_1\)};
+            \node [labeled_graph_node] (v2) at (1.5, 1.5) {\(v_2\)};
+            \node [labeled_graph_node] (v3) at (3, 1.5) {\(v_3\)};
+
+
+            %(eqn2[0], eqn1[0]), (eqn1[0], eqn2[1]), (eqn1[0], eqn2[2]),
+            %(eqn1[1], eqn2[0]), (eqn2[1], eqn1[1]), (eqn2[2], eqn1[1]),
+            %(eqn1[2], eqn2[0]), (eqn2[1], eqn1[2]), (eqn2[2], eqn1[2]),
+            \draw[->] (v4) -- (v1);
+            \draw[->] (v1) -- (v5);
+            \draw[->] (v1) -- (v6);
+            \draw[->] (v2) -- (v4);
+            \draw[->] (v5) -- (v2);
+            \draw[->] (v6) -- (v2);
+            \draw[->] (v3) -- (v4);
+            \draw[->] (v5) -- (v3);
+            \draw[->] (v6) -- (v3);
+        \end{tikzpicture}
+        \caption{\(K_{3,3}\) with a particular orientation}
+        \label{fig:oriented_K_3,3}
+    \end{figure}
+    Note the weight equation of each vertex below.
+    \[
+    \begin{cases}
+        \wt(v_1) = \ell(v_4) - \ell(v_5) - \ell(v_6) \\
+        \wt(v_2) = -\ell(v_4) + \ell(v_5) + \ell(v_6) \\
+        \wt(v_3) = -\ell(v_4) + \ell(v_5) + \ell(v_6) \\
+        \wt(v_4) = -\ell(v_1) + \ell(v_2) + \ell(v_3) \\
+        \wt(v_5) = \ell(v_1) - \ell(v_2) - \ell(v_3) \\
+        \wt(v_6) = \ell(v_1) - \ell(v_2) - \ell(v_3)
+    \end{cases}
+    \]
+    Assuming our labeling is DDM, then this system reduces to:
+    \[
+    \begin{cases}
+        0 = \ell(v_1) - \ell(v_2) - \ell(v_3) \\
+        0 = \ell(v_4) - \ell(v_5) - \ell(v_6) 
+    \end{cases}
+    \]
+    By adding another instance of \(K_{3,3}\) with vertices \(\{v_7, v_8, \cdots v_{12}\}\) and the same orientation as before,
+    we obtain
+    \[
+    \begin{cases}
+        0 = \ell(v_1) - \ell(v_2) - \ell(v_3) \\
+        0 = \ell(v_4) - \ell(v_5) - \ell(v_6) \\
+        0 = \ell(v_7) - \ell(v_8) - \ell(v_9) \\
+        0 = \ell(v_{10}) - \ell(v_{11}) - \ell(v_{12})
+    \end{cases}
+    \]
+    An order \(4\) skolem sequence (see \cite{skolemCertainDistributionsIntegers1957}, \cite{skolemRemarksTripleSystems1958}) can be used to solve this problem.
+
+    If we have \(2(x+1)\) copies of \(K_{3,3}\) with this orientation, a skolem sequence of order \(4x\) can be used
+    to solve a similar system.
 \end{proof}
