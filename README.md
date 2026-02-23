@@ -73,5 +73,9 @@ Some additional constraints that might interesting to explore are
 - Searching for the "coarsest" DDMOGs by maximizing the number of edges.
 - Generalizing to labels taken from finitely generated abelian groups.
 
-
 ### Future
+Is the base b representation of labels conducive to determining if a b-regular graph is DDMO?
+
+How many different ways are there to label and orient a DDMO graph?
+
+

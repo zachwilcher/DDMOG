@@ -1,9 +1,10 @@
 from sage.graphs.connectivity import is_connected
-from magicutils.ddmog_iterator import DDMOGIterator
-from magicutils.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
-from magicutils.check_magic import save
+from magicutils.distance_magic.ddmog_iterator import DDMOGIterator
+from magicutils.distance_magic.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
+from magicutils.distance_magic.check_magic import save
 import time
 import math
+import numpy as np
 
 def find_sparsest_ddmog(order):
 
@@ -34,26 +35,44 @@ def find_sparsest_ddmog(order):
 class MyStitcherCallback(DDMOGStitcherCallback):
     found_digraphs = []
     found_ddmog_count = 0
+    hashes = set()
 
     def __call__(self, digraph):
         MyStitcherCallback.found_ddmog_count += 1
 
         print(f"Found {MyStitcherCallback.found_ddmog_count} DDMOGs so far...")
 
-        if not is_connected(digraph):
-            MyStitcherCallback.found_digraphs.append(digraph)
-            save(digraph, f"results/order_{digraph.order()}_ddmog_not_connected")
-            self.stop_search()
+        #MyStitcherCallback.found_digraphs.append(digraph)
+        A = digraph.adjacency_matrix()
+        S = A.transpose() - A
+        R = S.echelon_form().numpy().astype(np.int64)
+        hash = R.tobytes()
+        if hash not in MyStitcherCallback.hashes:
+            MyStitcherCallback.found_digraphs.append((R.copy(), digraph))
+            MyStitcherCallback.hashes.add(hash)
         
-min_order = 20
-max_order = 20
+        
+min_order = 11
+max_order = 11
 print(f"Searching for DDMOGs with ceil(3n/2) edges and {min_order} <= n <= {max_order} with DDMOGStitcher.")
 print("---------------------------------------------------------------")
 for order in range(min_order, max_order + 1):
     MyStitcherCallback.found_ddmog_count = 0
     MyStitcherCallback.found_digraphs = []
     max_size = math.ceil(3 * order / 2)
-    stitcher = DDMOGStitcher(order, 3, 3)
+    stitcher = DDMOGStitcher(order, 3, 4)
     stitcher.stitch(max_size, MyStitcherCallback)
     print(f"Found {len(MyStitcherCallback.found_digraphs)} DDMOGs of order {order} with at most {max_size} edges.")
+
+
+n = 1
+for matrix, digraph in MyStitcherCallback.found_digraphs:
+    save(digraph, f"11/{n}")
+    print(n)
+
+    A = digraph.adjacency_matrix()
+    S = A.transpose() - A
+    R = S.echelon_form()
+    print(R)
+    n += 1
 
