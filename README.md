@@ -89,10 +89,13 @@ Some additional constraints that might interesting to explore are
 - Searching for the densest DDMOGs by maximizing the number of edges.
 - Generalizing to labels taken from finitely generated abelian groups.
 
-### Other questions to explore
-Is the base b representation of labels conducive to determining if a regular
-graph is DDMO?
+### Other potentially interesting questions
+- How many different ways are there to label and orient a DDMO graph?
+- Is there a fast way to check if a graph is DDMO?
+- Is the base b representation of labels conducive to determining if a regular graph is DDMO?
 
-How many different ways are there to label and orient a DDMO graph?
+## Constructing Sparse DDMOGs
+Skolem sequences and hooked Skolem sequences can be used to construct DDMOGs
+with ceil(3n/2) edges whenever n >= 10 and n = 0,5,11 (mod 12).  
+See `magicutils/distance_magic/graphs.py` for implementations.
 
-Is there a fast way to check if a graph is DDMO?
