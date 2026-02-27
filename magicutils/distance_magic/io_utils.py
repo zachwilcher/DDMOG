@@ -17,6 +17,10 @@ def create_from_str(A_str):
     n = len(rows)
     digraph = DiGraph()
     digraph.add_vertices(range(n))
+
+    for i in range(n):
+        digraph.set_vertex(i, i+1)
+
     for i, row in enumerate(rows):
         entries = row.strip("[]").split()
         for j, entry in enumerate(entries):

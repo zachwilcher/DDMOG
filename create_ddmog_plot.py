@@ -3,7 +3,7 @@ from magicutils.distance_magic.io_utils import save_plot, load
 
 def main(matrix_path, output_path):
     digraph = load(matrix_path)
-    save_plot(output_path, digraph)
+    save_plot(digraph, output_path)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
