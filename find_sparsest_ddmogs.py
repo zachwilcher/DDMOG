@@ -21,15 +21,17 @@ class MyStitcherCallback(DDMOGStitcherCallback):
 
         print(f"Found a {"" if connected else "dis"}connected DDMOG of order {order}.")
 
-        name = f"{results_directory}/order_{order}_ddmog"
+        path_str = f"{results_directory}/order_{order}_ddmog"
         if not connected:
-            name += "_not_connected"
+            path_str += "_not_connected"
+        path_str += ".txt"
+        path = Path(path_str)
 
         if require_connected and connected:
-            save(digraph, name)
+            save(digraph, path)
             self.stop_search()
         elif not require_connected:
-            save(digraph, name)
+            save(digraph, path)
             self.stop_search()
         
         

@@ -4,13 +4,13 @@ All digraphs are assumed to have their vertices be the 0 through n - 1.
 from pathlib import Path
 from sage.graphs.digraph import DiGraph
 
-def save(digraph, name):
-    with open(Path(f"{name}.txt"), "w") as f:
+def save(digraph, path):
+    with open(path, "w") as f:
         f.write(digraph.adjacency_matrix().str())
 
-def save_plot(digraph, name):
+def save_plot(digraph, path):
     plot = digraph.plot(vertex_labels=lambda vertex: str(digraph.get_vertex(vertex)))
-    plot.save(f"{name}.png")
+    plot.save(path)
 
 def create_from_str(A_str):
     rows = A_str.strip().split("\n")
@@ -28,8 +28,8 @@ def create_from_str(A_str):
                 digraph.add_edge((i, j))
     return digraph
 
-def load(name):
-    with open(Path(f"{name}.txt"), "r") as f:
+def load(path):
+    with open(path, "r") as f:
         A_str = f.read()
     digraph = create_from_str(A_str)
     return digraph
