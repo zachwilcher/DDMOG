@@ -6,7 +6,7 @@ where n is the order of the graph.
 
 from sage.graphs.digraph import DiGraph
 import itertools
-from magicutils.check_magic import get_vertex_imbalance, get_graph_imbalance
+from magicutils.distance_magic.check_magic import get_vertex_imbalance, get_graph_imbalance
 from magicutils.skolem import skolem
 
 def create_bipartite(m, n):
@@ -121,7 +121,7 @@ def disjoint_bipartite(x):
     # see Dinitz' combinatorial handbook page 614: solution to Heffter's first difference problem
     # for this construction. We rearrange things so that the equation is
     # a - b - c = 0
-    # TODO: who came up with this originally? Probably Roza...
+    # TODO: who came up with this originally? Skolem
     equations = [(pair[1] + n - 1, pair[0] + n - 1, pair[1] - pair[0] - 1) for pair in seq]
 
     digraph = DiGraph()

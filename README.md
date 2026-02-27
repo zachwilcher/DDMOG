@@ -1,5 +1,5 @@
 # DDMOGs!
-This repository contains code and notes for analyzing difference-distance magic oriented graphs (DDMOGs).
+This repository contains code for analyzing difference-distance magic oriented graphs (DDMOGs).
 
 ## How the project was set up
 This project uses a conda environment to manage dependencies.
@@ -32,22 +32,24 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 
 ## Searching for DDMOGs
 There are three approaches to searching for DDMOGs implemented in this repository.
-1. Brute force search through all oriented graphs of order n using `OrientedGraphIterator` in `magicutils/iterators.py`.
-2. A backtracking search through all possible solutions to the weight equation using `DDMOGIterator` in `magicutils/ddmog_iterator.py`.
-3. A SAT solver approach using `DDMOGStitcher` in `magicutils/ddmog_stitcher.py` that attempts to "stitch" together possible rows of an order n DDMOG's skew adjacency matrix.
+1. Brute force search through all oriented graphs of order n using `OrientedGraphIterator` in `magicutils/distance_magic/iterators.py`.
+2. A backtracking search through all possible solutions to the weight equation using `DDMOGIterator` in `magicutils/distance_magic/ddmog_iterator.py`.
+3. A SAT solver approach using `DDMOGStitcher` in `magicutils/distance_magic/ddmog_stitcher.py` that attempts to "stitch" together possible rows of an order n DDMOG's skew adjacency matrix.
 
 
 ### DDMOGIterator Tests
+The program `find_all_ddmogs.py` uses `DDMOGIterator` to search for all
+connected DDMOGs from order 5 upward.
 The subset sum variation subproblem in this algorithm is a bottleneck.
 The initial working implementation of the algorithm for finding all weakly connected DDMOGs of order n
-has the following speed when running on my macbook.
+had the following speed when running on my macbook.
 ```
-Found 6 DDMOGs out of 59049 possible oriented graphs of order 5 in 0.35 seconds.
-Found 22 DDMOGs out of 14348907 possible oriented graphs of order 6 in 0.00 seconds.
-Found 296 DDMOGs out of 10460353203 possible oriented graphs of order 7 in 0.08 seconds.
-Found 9930 DDMOGs out of 22876792454961 possible oriented graphs of order 8 in 3.10 seconds.
-Found 754804 DDMOGs out of 150094635296999121 possible oriented graphs of order 9 in 320.36 seconds.
-Found 130528594 DDMOGs out of 2954312706550833698643 possible oriented graphs of order 10 in 79081.32 seconds.
+Found all 6 DDMOGs of order 5 in 0.35 seconds.
+Found all 22 DDMOGs of order 6 in 0.00 seconds.
+Found all 296 DDMOGs of order 7 in 0.08 seconds.
+Found all 9930 DDMOGs of order 8 in 3.10 seconds.
+Found all 754804 DDMOGs of order 9 in 320.36 seconds.
+Found all 130528594 DDMOGs of order 10 in 79081.32 seconds.
 ```
 
 Note that 6, 22, and 296 on order 5, 6, and 7 align with the final section of "Difference distance magic oriented graphs"
@@ -55,7 +57,7 @@ However, 9930 on order 8 is different from the reported 8240 in that paper.
 They remark that they do not account for isomorphic graphs under rotations and reflections.
 
 Using Musser's sumset algorithm for the subset sum subproblem provides a significant speedup.
-Here is the speed running on the same macbook from before
+Here is the current speed running on the same macbook from before
 ```
 Found all 6 DDMOGs of order 5 in 0.46 seconds.
 Found all 22 DDMOGs of order 6 in 0.00 seconds.
@@ -68,14 +70,29 @@ Found all 754804 DDMOGs of order 9 in 228.15 seconds.
 Adding maximum size constraints to the SAT solver allows for finding sparse DDMOGs with much higher vertex counts.
 However, searching for all DDMOGs of a given order with this approach is marginally slower than `DDMOGIterator`.
 
+The python program `find_sparsest_ddmogs.py` searches for DDMOGs with minimal
+sparsity (ceil(3n/2) edges) and outputs their adjacency matrices in the
+directory `sparsest_ddmogs`.
+The results of this program for orders up to 40 are available in the repository.
+Note that the program `create_ddmog_plot.py` can be used to create a png picture
+of a DDMOG given the path to its adjacency matrix.
+
+The program currently has a maximum search time of 1 hour and failed to find sparse DDMOGs
+with orders 25, 30, 31, 33, 34, 35, 37, 38, and 39.
+However, it did not find any DDMOGs with orders 14, 18, and 22 
+not due to time limits.
+Perhaps there does not exist DDMOGs with ceil(3n/2) edges when n = 2 (mod 4) and n >= 10.
+
+
 Some additional constraints that might interesting to explore are
 - Searching for k-regular DDMO graphs when k > 3.
-- Searching for the "coarsest" DDMOGs by maximizing the number of edges.
+- Searching for the densest DDMOGs by maximizing the number of edges.
 - Generalizing to labels taken from finitely generated abelian groups.
 
-### Future
-Is the base b representation of labels conducive to determining if a b-regular graph is DDMO?
+### Other questions to explore
+Is the base b representation of labels conducive to determining if a regular
+graph is DDMO?
 
 How many different ways are there to label and orient a DDMO graph?
 
-
+Is there a fast way to check if a graph is DDMO?

@@ -1,5 +1,3 @@
-
-import numpy as np
 from ortools.sat.python import cp_model
 
 def change_base(n, b):
@@ -17,7 +15,8 @@ class Callback(cp_model.CpSolverSolutionCallback):
         self.arr = arr
         self.index_vars = index_vars
         self.solution_count = 0
-        self.pretty_count = 0
+        self.solution_classes = []
+        self.solution_ids = []
 
     def on_solution_callback(self):
         self.solution_count += 1
@@ -25,7 +24,8 @@ class Callback(cp_model.CpSolverSolutionCallback):
         # build triples of indices
         triples = []
 
-        ugly = False
+        id = set()
+
         for i in range(0, len(self.arr), 3):
             triple = (
                 self.value(self.index_vars[i]),
@@ -33,22 +33,20 @@ class Callback(cp_model.CpSolverSolutionCallback):
                 self.value(self.index_vars[i + 2]),
             )
             triples.append(triple)
-            if ((self.arr[triple[0]] == 3) and (self.arr[triple[1]] != 12)) \
-                or ((self.arr[triple[0]] != 1) and (self.arr[triple[1]] > 22)):
-                ugly = True
 
-        if not ugly:
-            self.pretty_count += 1
+            id.add(triple[1])
+        
+        solution_index = None
+        for index, other_id in enumerate(self.solution_ids):
+            if other_id == id:
+                solution_index = index
+        if solution_index is None:
+            self.solution_ids.append(id)
+            self.solution_classes.append([triples])
+        else:
+            self.solution_classes[solution_index].append(triples)
 
-            print(f"new solution: {self.pretty_count}")
-            for triple in triples:
-                base = 10
 
-                a = change_base(self.arr[triple[0]], base)
-                b = change_base(self.arr[triple[1]], base)
-                c = change_base(self.arr[triple[2]], base)
-
-                print(f"{a} + {b} = {c}")
 
 
 
@@ -76,9 +74,9 @@ def foo(arr, max_time=None):
         model.add(a + b == c)
 
         # these constraints are temporary for testing
-        model.add(a < arr[len(arr) // 3])
+        #model.add(a < arr[len(arr) // 3])
         #model.add_implication(a == 1, b == 30)
-        model.add(c != arr[-2])
+        #model.add(c != arr[-2])
         #model.add_modulo_equality(0,a,2)
 
         # force a nice ordering
@@ -96,7 +94,7 @@ def foo(arr, max_time=None):
     solver.solve(model, callback)
     return callback
 
-x = 5
+x = 2
 arr = None
 if x % 2 == 1:
     arr = list([1]) + list(range(3, (6 * x + 1) + 1))
@@ -104,4 +102,14 @@ else:
     arr = list(range(2, (6 * x + 1) + 1))
 
 callback_obj = foo(arr)
-#print(callback_obj.solution_count)
+
+for index, solution_class in enumerate(callback_obj.solution_classes):
+    print(f"class {index+ 1} has {len(solution_class)} answers")
+    print("solution 1")
+    for triple in solution_class[0]:
+
+        print(f"{arr[triple[0]]} + {arr[triple[1]]} = {arr[triple[2]]}")
+    if len(solution_class) > 1:
+        print("solution 2")
+        for triple in solution_class[1]:
+            print(f"{arr[triple[0]]} + {arr[triple[1]]} = {arr[triple[2]]}")

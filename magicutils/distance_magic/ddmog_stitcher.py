@@ -2,7 +2,7 @@
 from sage.graphs.digraph import DiGraph
 import numpy as np
 
-from magicutils.solver import SumsetSolverImpl as Solver
+from magicutils.distance_magic.solver import SumsetSolverImpl as Solver
 
 from ortools.sat.python import cp_model
 import math
@@ -96,8 +96,6 @@ class DDMOGStitcher:
 
 
     def stitch(self, max_size=None, callback_factory=DDMOGStitcherCallback, max_time=None):
-        start_time = time.time()
-        
 
         if max_size is None:
             max_size = math.comb(self.n, 2)
