@@ -109,40 +109,46 @@ def balance_ddmog(digraph):
 
     return new_digraph
 
+def bipartite_3_3(digraph, part1, part2):
+    """Connect the vertices specified in part1 to part2 so they are the parts of K_{3,3}
+    with a magic orientation.
+    """
+
+    edges = [
+        (part2[0], part1[0]), (part1[0], part2[1]), (part1[0], part2[2]),
+        (part1[1], part2[0]), (part2[1], part1[1]), (part2[2], part1[1]),
+        (part1[2], part2[0]), (part2[1], part1[2]), (part2[2], part1[2]),
+    ]
+    digraph.add_edges(edges)
+
 
 def disjoint_bipartite(x):
     """\
-    Assumes x \\ge 1
-    Create a DDMOG consisting of x disjoint pairs of K_{3,3}
-    using a skolem sequence of order 4x
+    Assumes x >= 0
+    Create a DDMOG consisting of 2(x+1) copies of K_{3,3}
+    using a Skolem sequence
     """
-    n = 4 * x
-    seq = skolem(4 * x)
-    # see Dinitz' combinatorial handbook page 614: solution to Heffter's first difference problem
-    # for this construction. We rearrange things so that the equation is
-    # a - b - c = 0
+    # there are 6 * 2*(x + 1) vertices meaning, there
+    # are 12 * (x + 1) / 3 parts
+    seq_order = 4 * (x + 1)
+    skolem_seq = skolem(n)
     # This construction can be found in Skolem's "Some remarks on the triples systems of Steiner"
-    equations = [(pair[1] + n - 1, pair[0] + n - 1, pair[1] - pair[0] - 1) for pair in seq]
+    difference_triples = [(pair[1] - pair[0], pair[0] + seq_order, pair[1] + seq_order) for pair in skolem_seq]
 
     digraph = DiGraph()
-    digraph.add_vertices(range(6 * 2 * x))
+    n = 6 * 2 * (x + 1)
+    digraph.add_vertices(range(n))
+
     for vertex in digraph.vertex_iterator():
         label = vertex + 1
         digraph.set_vertex(vertex, label)
 
-    for i in range(0, len(equations), 2):
-        eqn1 = equations[i]
-        eqn2 = equations[i + 1]
-
-        # choose some way to connect together
-        # the vertices specified in eqn1 to the vertices in eqn2
-        # here is one way:
-        edges = [
-            (eqn2[0], eqn1[0]), (eqn1[0], eqn2[1]), (eqn1[0], eqn2[2]),
-            (eqn1[1], eqn2[0]), (eqn2[1], eqn1[1]), (eqn2[2], eqn1[1]),
-            (eqn1[2], eqn2[0]), (eqn2[1], eqn1[2]), (eqn2[2], eqn1[2]),
-        ]
-        digraph.add_edges(edges)
+    for i in range(0, len(difference_triples), 2):
+        triple1 = difference_triples[i]
+        triple2 = difference_triples[i+1]
+        part1 = (triple1[0] - 1, triple1[1] - 1, triple1[2] - 1)
+        part2 = (triple2[0] - 1, triple2[1] - 1, triple2[2] - 1)
+        bipartite_3_3(digraph, part1, part2)
 
     return digraph
 
@@ -153,8 +159,8 @@ def wheel_disjoint_bipartite(x):
     """
     n = 6x + 5
     The idea is to look at the parity of x. 
-    If x is odd, then we use the values: 1, n, n - 1, n - 2, n - 3 on the wheel graph.
-    If x is even, then we use the values: 2, n, n - 1, n - 2, n - 3 on the wheel graph.
+    If x is even, then we use the values: 1, n, n - 1, n - 2, n - 3 on the wheel graph.
+    If x is odd, then we use the values: 2, n, n - 1, n - 2, n - 3 on the wheel graph.
 
     What remains is to partition the integers 2, 3, ... n - 4 into difference triples
     or the integers 1, 3, 4, 5, ... n - 4 into difference triples.
@@ -166,26 +172,43 @@ def wheel_disjoint_bipartite(x):
     there are 6x/3 parts. Hence an order 2x sequence yields the necessary pairs.
     """
 
-    n = 2 * x
-    skolem_seq = near_skolem(n, 1 if x % 2 == 1 else 2)
+
+    digraph = DiGraph()
+    n = 6 * x + 5
+    digraph.add_vertices(range(n))
+
+    for vertex in digraph.vertex_iterator():
+        label = vertex + 1
+        digraph.set_vertex(vertex, label)
+
+    if x % 2 == 0:
+        edges = [
+            (0, n-1), (0, n-4), (n-2, 0), (n-3, 0),
+            (n-1, n-3), (n-3, n-2), (n-2, n-4), (n-4, n-1)
+        ]
+        digraph.add_edges(edges)
+    else:
+        edges = [
+            (1, n-1), (1, n-4), (n-2, 1), (n-3, 1),
+            (n-1, n-2), (n-2, n-3), (n-3, n-4), (n-4, n-1)
+        ]
+        digraph.add_edges(edges)
+
+    if x == 0:
+        return digraph
+
+    seq_order = 2 * x
+    skolem_seq = near_skolem(seq_order, 1 if x % 2 == 1 else 2)
 
     # triples are arranged as (a,b,c)
     # where a + b = c and a <= b
-    difference_triples = [(pair[1] - pair[0], pair[0] + n, pair[1] + n) for pair in skolem_seq]
-
-    digraph = DiGraph()
-    digraph.add_vertices(range(6 * x + 5))
-
-    if x % 2 == 1:
-        # TODO: add wheel graph edges
-        ...
-    else:
-        # TODO: add wheel graph edges
-        ...
+    difference_triples = [(pair[1] - pair[0], pair[0] + seq_order, pair[1] + seq_order) for pair in skolem_seq]
     
     for i in range(0, len(difference_triples), 2):
-        # TODO add copy of K_{3,3}
-        # based on equations specified in difference_triples[i] and difference_triples[i+1]
-        ...
+        triple1 = difference_triples[i]
+        triple2 = difference_triples[i+1]
+        part1 = (triple1[0] - 1, triple1[1] - 1, triple1[2] - 1)
+        part2 = (triple2[0] - 1, triple2[1] - 1, triple2[2] - 1)
+        bipartite_3_3(digraph, part1, part2)
 
     return digraph
