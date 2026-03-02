@@ -10,7 +10,7 @@ def skolem(n):
 
     necessary_conditions = \
         (n > 0) and (
-            (n % 4 == 0) or \
+            (n % 4 == 0) or
             (n % 4 == 1)
         )
 
@@ -63,13 +63,13 @@ def skolem(n):
 
 
 def perfect_langford(n, d):
-    """Construct a perfect langford sequence of order n and defect d."""
+    """Construct a perfect Langford sequence of order n and defect d."""
 
     # necessary conditions as specified in the combinatorial handbook
     necessary_conditions = \
-    (n >= (2 * d - 1)) and (
+    (n > 0) and (d > 0) and (n >= (2 * d - 1)) and (
             (((n % 4 == 0) or (n % 4 == 1)) and (d % 2 == 1))
-        or  (((n % 4 == 3) or (n % 4 == 4)) and (d % 2 == 0))
+        or  (((n % 4 == 2) or (n % 4 == 3)) and (d % 2 == 0))
     )
 
     if not necessary_conditions:
@@ -80,27 +80,28 @@ def perfect_langford(n, d):
 
 
 def near_skolem(n, m):
-    """Create a near order n skolem sequence with defect m"""
+    """Create an order n near Skolem sequence with defect m"""
 
     necessary_conditions = \
-       ((n % 4 == 0) and (m % 2 == 1))\
-    or ((n % 4 == 1) and (m % 2 == 1))\
-    or ((n % 4 == 2) and (m % 2 == 0))\
-    or ((n % 4 == 3) and (m % 2 == 0))
+        (n > 0) and (m > 0) and (m <= n) and (
+               ((n % 4 == 0) and (m % 2 == 1))
+            or ((n % 4 == 1) and (m % 2 == 1))
+            or ((n % 4 == 2) and (m % 2 == 0))
+            or ((n % 4 == 3) and (m % 2 == 0))
+        )
 
     if not necessary_conditions:
         raise ValueError("Invalid values of n and m.")
     
-    if (m == 1) and (n % 4 == 1):
-        # This is a perfect langford sequence with d = 2
-        # A perfect langford sequence exists
-        # (according to combinatorial handbook) iff
-        # n % 4 == 0, 3 and d is even
-        # but Shalaby's proof assumes that a perfect Langford sequence exists in this case?
-        raise ValueError("Invalid value of m and n")
-
-    if (m == 1) and (n % 4 == 0):
-        # construct a perfect Langford sequence of order n with defect 2
+    if (m == 1):
+        # This is a perfect langford sequence with d = 2.
+        # If m = 1, then m is odd. So, n = 0,1 (mod 4). Perfect Langford sequences exist whenever
+        # m is odd and n = 0,1 (mod 4)
+        # However, if m = 1, then the necessary conditions for a perfect Langford sequence
+        # with d = 2 requires that 2d - 1 <= n. So, if n < 3, then what?
+        # TODO: brute force solve the cases of n = 1, 2
+        if n < 3:
+            raise NotImplementedError("Do perfect Langford sequences even exist when n = 0,1 and m = 1?")
         return perfect_langford(n, 2)
     
 
@@ -129,5 +130,7 @@ def near_skolem(n, m):
             seq.append((2 * s + 2 * r + 1, 6 * s - 2 * r - 1))
 
         return seq
-
+    
+    raise NotImplementedError("There are 7 more cases to implement....")
+    # TODO: implement rest of cases
 
