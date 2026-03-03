@@ -62,10 +62,21 @@ def skolem(n):
         return seq
 
 
-def perfect_langford(n, d):
-    """Construct a perfect Langford sequence of order n and defect d."""
+def perfect_langford(n):
+    """Construct a perfect Langford sequence of order n and defect 2."""
 
-    # necessary conditions as specified in the combinatorial handbook
+    """"
+    See C. J. Priday and Roy O. Davies, On Langford's Problem Math. Gaz. 43 (1959) 253-255
+    for original source.
+
+    See J. E. Simpson, Langford sequences: Perfect and hooked, Discrete Math. 44 (1983)97-104. ⟨613⟩
+    for defects other than 2. Specifically, they show constructions for even orders but cite other works
+    for the other possibilities.
+    Perhaps one day I will get around to implementing these other for arbitrary defect
+    but for now I only need defect 2.
+    """
+
+    d = 2
     necessary_conditions = \
     (n > 0) and (d > 0) and (n >= (2 * d - 1)) and (
             (((n % 4 == 0) or (n % 4 == 1)) and (d % 2 == 1))
@@ -74,8 +85,13 @@ def perfect_langford(n, d):
 
     if not necessary_conditions:
         raise ValueError("Invalid values of n and d")
-    
-    raise NotImplementedError("Implement the constructive proof as specified in J. E. Simpson, Langford sequences: Perfect and hooked, Discrete Math. 44 (1983)97–104. ⟨613⟩")
+
+    if n % 4 == 3:
+        k = (n + 1) // 4
+
+        seq = []
+        for r in range(2*k, (2*k - 4) + 1):
+            seq.append()
 
 
 
@@ -94,7 +110,7 @@ def near_skolem(n, m):
         raise ValueError("Invalid values of n and m.")
     
     if (m == 1):
-        # This is a perfect langford sequence with d = 2.
+        # This is a perfect langford sequence with d = 1.
         # If m = 1, then m is odd. So, n = 0,1 (mod 4). Perfect Langford sequences exist whenever
         # m is odd and n = 0,1 (mod 4)
         # However, if m = 1, then the necessary conditions for a perfect Langford sequence
@@ -102,7 +118,7 @@ def near_skolem(n, m):
         # TODO: brute force solve the cases of n = 1, 2
         if n < 3:
             raise NotImplementedError("Do perfect Langford sequences even exist when n = 0,1 and m = 1?")
-        return perfect_langford(n, 2)
+        return perfect_langford(n)
     
 
     if n % 8 == 0:

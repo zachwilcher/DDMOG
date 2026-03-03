@@ -157,19 +157,29 @@ def wheel_disjoint_bipartite(x):
 
 
     """
-    n = 6x + 5
-    The idea is to look at the parity of x. 
-    If x is even, then we use the values: 1, n, n - 1, n - 2, n - 3 on the wheel graph.
-    If x is odd, then we use the values: 2, n, n - 1, n - 2, n - 3 on the wheel graph.
+    There are 6x + 5 numbers.
+    6x of them are used in the K_{3,3} copies.
+    If we use the numbers: 2,3,4, ... ,6x + 1 in the K_{3,3} copies,
+    one way to partition these numbers into difference triples is the use of
+    a perfect Langford sequence with defect 2 and order 2x.
+    Then, the numbers 2,3,4,...,2x + 1 will be the small numbers
+    and the numbers (2x + 1 + a_i, 2x + 1 + b_i) will be the medium and big numbers respectively.
+    Does this exist?
+    Well, 2 is even and perfect Langford sequences always exist if the defect is even
+    and the order = 0,3 (mod 4).
+    Since 2x = 0,2 (mod 4) we have our solution only if x is even.
 
-    What remains is to partition the integers 2, 3, ... n - 4 into difference triples
-    or the integers 1, 3, 4, 5, ... n - 4 into difference triples.
 
-    Such a partition can be constructed using near-skolem sequences.
-    By taking the defect to be 1 when x is odd and the defect to be 2 when x is even.
-    What order sequence?
-    There are 6x numbers we wish to partition. Each part contains 3 numbers so,
-    there are 6x/3 parts. Hence an order 2x sequence yields the necessary pairs.
+    If instead we use the numbers 1,3,4,5,...,6x + 1 in the K_{3,3} copies,
+    one way to partition these numbers into difference triples is through the use of a
+    near-Skolem sequence with defect 2 and order 2x.
+    Then, the numbers 1,3,4,5,...,2x+1 will be the small numbers
+    and 2x + 1 + a_i, 2x + 1 + b_i will be the medium and big numbers respectively.
+    Does this exist?
+    Yea. Shalaby insists that an order n near-Skolem sequence with defect d
+    exists whenever d is even and n = 2,3 (mod 4).
+    Since 2x = 0, 2 (mod 4) we have our solution whenever x is odd.
+
     """
 
 

@@ -74,7 +74,7 @@ def foo(arr, max_time=None):
         model.add(a + b == c)
 
         # these constraints are temporary for testing
-        #model.add(a < arr[len(arr) // 3])
+        model.add(a < arr[len(arr) // 3])
         #model.add_implication(a == 1, b == 30)
         #model.add(c != arr[-2])
         #model.add_modulo_equality(0,a,2)
@@ -96,10 +96,10 @@ def foo(arr, max_time=None):
 
 x = 2
 arr = None
-if x % 2 == 1:
-    arr = list([1]) + list(range(3, (6 * x + 1) + 1))
-else:
+if x % 2 == 0:
     arr = list(range(2, (6 * x + 1) + 1))
+else:
+    arr = list([1]) + list(range(3, (6 * x + 1) + 1))
 
 callback_obj = foo(arr)
 
