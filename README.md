@@ -83,6 +83,10 @@ However, it did not find any DDMOGs with orders 14, 18, and 22
 not due to time limits.
 Perhaps there does not exist DDMOGs with ceil(3n/2) edges when n = 2 (mod 4) and n >= 10.
 
+Update: This indeed is the case. If a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
+then the graph is 3-regular. Adding up each label 3 times corresponds exactly
+to the number of times each label appears in the weight equations.
+It can be shown that this sum is an integer only when n = 0,3 (mod 4).
 
 Some additional constraints that might interesting to explore are
 - Searching for k-regular DDMO graphs when k > 3.
@@ -95,7 +99,7 @@ Some additional constraints that might interesting to explore are
 - Is the base b representation of labels conducive to determining if a regular graph is DDMO?
 
 ## Constructing Sparse DDMOGs
-Skolem sequences and hooked Skolem sequences can be used to construct DDMOGs
+Skolem sequences and near-Skolem sequences can be used to construct DDMOGs
 with ceil(3n/2) edges whenever n >= 10 and n = 0,5,11 (mod 12).  
 See `magicutils/distance_magic/graphs.py` for implementations.
 

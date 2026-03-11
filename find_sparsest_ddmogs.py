@@ -36,11 +36,20 @@ class MyStitcherCallback(DDMOGStitcherCallback):
         
         
 def main(starting_order, max_order):
-    """Attempts to find a DDMOG with math.ceil(3 * order / 2) edges"""
+    """Attempts to find a DDMOG with math.ceil(3 * order / 2) edges
+    or math.ceil(3 * order / 2) + 1 edges if n = 2 (mod 4)"""
 
     for order in range(starting_order, max_order + 1):
         max_size = math.ceil(3 * order / 2)
-        stitcher = DDMOGStitcher(order, 3, 4)
+        # no DDMOGs exist with 3n/2 edges when n = 2 (mod 4)
+        if order % 4 == 2:
+            max_size += 1
+        min_degree = 3
+        max_degree = 3
+        # The graph can be 3-regular only when n = 0,3 (mod 4)
+        if (order % 4 != 0) and (order % 4 != 3):
+            max_degree = 4
+        stitcher = DDMOGStitcher(order, min_degree, max_degree)
         stitcher.stitch(max_size, MyStitcherCallback, max_search_time)
 
 if __name__ == "__main__":
