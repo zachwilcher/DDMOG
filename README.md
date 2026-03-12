@@ -71,19 +71,16 @@ Adding maximum size constraints to the SAT solver allows for finding sparse DDMO
 However, searching for all DDMOGs of a given order with this approach is marginally slower than `DDMOGIterator`.
 
 The python program `find_sparsest_ddmogs.py` searches for DDMOGs with minimal
-sparsity (ceil(3n/2) edges) and outputs their adjacency matrices in the
-directory `sparsest_ddmogs`.
-The results of this program for orders up to 40 are available in the repository.
-Note that the program `create_ddmog_plot.py` can be used to create a png picture
-of a DDMOG given the path to its adjacency matrix.
+sparsity (ceil(3n/2) edges or ceil(3n/2) + 1 edges if n = 2 (mod 4)) and outputs
+their adjacency matrices in the directory `sparsest_ddmogs`.  The results of
+this program for orders up to 40 are available in the repository.  Note that the
+program `create_ddmog_plot.py` can be used to create a png picture of a DDMOG
+given the path to its adjacency matrix.
 
 The program currently has a maximum search time of 1 hour and failed to find sparse DDMOGs
 with orders 25, 30, 31, 33, 34, 35, 37, 38, and 39.
-However, it did not find any DDMOGs with orders 14, 18, and 22 
-not due to time limits.
-Perhaps there does not exist DDMOGs with ceil(3n/2) edges when n = 2 (mod 4) and n >= 10.
 
-Update: This indeed is the case. If a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
+Note that if a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
 then the graph is 3-regular. Adding up each label 3 times corresponds exactly
 to the number of times each label appears in the weight equations.
 It can be shown that this sum is an integer only when n = 0,3 (mod 4).
