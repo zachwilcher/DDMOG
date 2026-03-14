@@ -42,7 +42,7 @@ The program `find_all_ddmogs.py` uses `DDMOGIterator` to search for all
 connected DDMOGs from order 5 upward.
 The subset sum variation subproblem in this algorithm is a bottleneck.
 The initial working implementation of the algorithm for finding all weakly connected DDMOGs of order n
-had the following speed when running on my macbook.
+had the following speed when running on my MacBook.
 ```
 Found all 6 DDMOGs of order 5 in 0.35 seconds.
 Found all 22 DDMOGs of order 6 in 0.00 seconds.
@@ -57,7 +57,7 @@ However, 9930 on order 8 is different from the reported 8240 in that paper.
 They remark that they do not account for isomorphic graphs under rotations and reflections.
 
 Using Musser's sumset algorithm for the subset sum subproblem provides a significant speedup.
-Here is the current speed running on the same macbook from before
+Here is the current speed running on the same MacBook from before
 ```
 Found all 6 DDMOGs of order 5 in 0.46 seconds.
 Found all 22 DDMOGs of order 6 in 0.00 seconds.
@@ -76,9 +76,6 @@ their adjacency matrices in the directory `sparsest_ddmogs`.  The results of
 this program for orders up to 40 are available in the repository.  Note that the
 program `create_ddmog_plot.py` can be used to create a png picture of a DDMOG
 given the path to its adjacency matrix.
-
-The program currently has a maximum search time of 1 hour and failed to find sparse DDMOGs
-with orders 25, 30, 31, 33, 34, 35, 37, 38, and 39.
 
 Note that if a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
 then the graph is 3-regular. Adding up each label 3 times corresponds exactly
@@ -99,4 +96,7 @@ Some additional constraints that might interesting to explore are
 Skolem sequences and near-Skolem sequences can be used to construct DDMOGs
 with ceil(3n/2) edges whenever n >= 10 and n = 0,5,11 (mod 12).  
 See `magicutils/distance_magic/graphs.py` for implementations.
+
+I haven't implement the actual formulas for some of the sequences yet,
+but in theory the constructions work.
 

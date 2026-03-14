@@ -8,7 +8,7 @@ import math
 
 results_directory = "sparsest_ddmogs"
 require_connected = False
-max_search_time = 3600
+max_search_time = 7200
 
 # ensure results_directory exists
 Path(results_directory).mkdir(parents=True, exist_ok=True)
@@ -47,7 +47,7 @@ def main(starting_order, max_order):
         min_degree = 3
         max_degree = 3
         # The graph can be 3-regular only when n = 0,3 (mod 4)
-        if (order % 4 != 0) and (order % 4 != 3):
+        if (order % 4 != 0) or (order % 4 != 3):
             max_degree = 4
         stitcher = DDMOGStitcher(order, min_degree, max_degree)
         stitcher.stitch(max_size, MyStitcherCallback, max_search_time)
