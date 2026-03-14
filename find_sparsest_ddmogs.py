@@ -45,10 +45,10 @@ def main(starting_order, max_order):
         if order % 4 == 2:
             max_size += 1
         min_degree = 3
-        max_degree = 3
-        # The graph can be 3-regular only when n = 0,3 (mod 4)
-        if (order % 4 != 0) or (order % 4 != 3):
-            max_degree = 4
+        max_degree = 4
+        # The graph can be 3-regular only when n = 0 (mod 4)
+        if (order % 4 == 0):
+            max_degree = 3
         stitcher = DDMOGStitcher(order, min_degree, max_degree)
         stitcher.stitch(max_size, MyStitcherCallback, max_search_time)
 
