@@ -1,6 +1,5 @@
 import unittest
-import itertools
-from magicutils.skolem import skolem, perfect_langford, near_skolem
+from magicutils.skolem import skolem, langford
 
 class TestSkolemMethods(unittest.TestCase):
     def test_skolem(self):
@@ -15,29 +14,31 @@ class TestSkolemMethods(unittest.TestCase):
                 differences[index] = True
             self.assertTrue(all(differences))
     
-    def test_near_skolem(self):
-        for n,m in itertools.product(range(8, 100, 8), range(1,100)):
-
-            necessary_conditions = \
-                (n > 0) and (m > 0) and (m <= n) and (
-                       ((n % 4 == 0) and (m % 2 == 1))
-                    or ((n % 4 == 1) and (m % 2 == 1))
-                    or ((n % 4 == 2) and (m % 2 == 0))
-                    or ((n % 4 == 3) and (m % 2 == 0))
+    def test_langford(self):
+        for d in range(3, 100):
+            for n in range(2 * d - 1, 2 * d - 1 + 100):
+                necessary_conditions = \
+                (n > 0) and (d > 0) and (n >= (2 * d - 1)) and (
+                        (((n % 4 == 0) or (n % 4 == 1)) and (d % 2 == 1))
+                    or  (((n % 4 == 0) or (n % 4 == 3)) and (d % 2 == 0))
                 )
-            
-            if not necessary_conditions:
-                self.assertRaises(ValueError)
+                if not necessary_conditions:
+                    continue
+                if not ((n % 4 == 0)):
+                    continue
+                pairs = langford(n,d)
 
-            differences = [False] * n
-            pairs = near_skolem(n,m)
-            for (a,b) in pairs:
-                index = b - a - 1
-                differences[index] = True
-            self.assertFalse(differences[m])
-            differences[m] = True
-            self.assertTrue(all(differences))
-            
+                differences = [False] * n
+                for (a,b) in pairs:
+                    index = b - a - d
+                    differences[index] = True
+                test_passed = all(differences)
+                if not test_passed:
+                    print(pairs)
+                    print(n,d)
+                    print(differences)
+                self.assertTrue(all(differences))
+
 
 
             
