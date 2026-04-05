@@ -36,7 +36,7 @@ class MyStitcherCallback(DDMOGStitcherCallback):
 
         found = False
         for index, graph in enumerate(MyStitcherCallback.digraph_classes):
-            if graph.is_isomorphic(digraph):
+            if graph.to_undirected().is_isomorphic(digraph.to_undirected()):
                 found = True
                 MyStitcherCallback.digraph_class_sizes[index] += 1
                 break

@@ -5,7 +5,6 @@ Essentially, for each vertex, we find possible ways to
 connect it to other vertices in the graph so that the weight is 0.
 Then, upon reaching later vertices, we have an initial weight
 that we need to reduce to 0.
-
 """
 
 import numpy as np

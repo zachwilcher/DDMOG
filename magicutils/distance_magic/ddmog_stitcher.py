@@ -6,7 +6,6 @@ from magicutils.distance_magic.solver import SumsetSolverImpl as Solver
 
 from ortools.sat.python import cp_model
 import math
-
 import time
 
 

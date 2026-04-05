@@ -1,6 +1,10 @@
 # DDMOGs!
 This repository contains code for analyzing difference-distance magic oriented graphs (DDMOGs).
 
+This work utilized the Ball State University beowulf cluster, which is supported
+by The National Science Foundation (MRI-1726017) and Ball State University,
+Muncie, Indiana.
+
 ## How the project was set up
 This project uses a conda environment to manage dependencies.
 See the `conda-environment.yml` file for the list of packages used.
@@ -31,10 +35,13 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 ```
 
 ## Searching for DDMOGs
-There are three approaches to searching for DDMOGs implemented in this repository.
+There are multiple approaches to searching for DDMOGs implemented in this repository.
 1. Brute force search through all oriented graphs of order n using `OrientedGraphIterator` in `magicutils/distance_magic/iterators.py`.
 2. A backtracking search through all possible solutions to the weight equation using `DDMOGIterator` in `magicutils/distance_magic/ddmog_iterator.py`.
 3. A SAT solver approach using `DDMOGStitcher` in `magicutils/distance_magic/ddmog_stitcher.py` that attempts to "stitch" together possible rows of an order n DDMOG's skew adjacency matrix.
+4. A SAT solver approach 
+using `ddmo_generator` in `magicutils/distance_magic/ddmo_generator.py`
+that tries to find a valid DDM orientation and labeling of an unoriented graph.
 
 
 ### DDMOGIterator Tests
@@ -73,8 +80,8 @@ However, searching for all DDMOGs of a given order with this approach is margina
 The python program `find_sparsest_ddmogs.py` searches for DDMOGs with minimal
 sparsity (ceil(3n/2) edges or ceil(3n/2) + 1 edges if n = 2 (mod 4)) and outputs
 their adjacency matrices in the directory `sparsest_ddmogs`.  The results of
-this program for orders up to 40 are available in the repository.  Note that the
-program `create_ddmog_plot.py` can be used to create a png picture of a DDMOG
+this program for orders up to 38 are available in the repository (when n > 38 we use too much memory...).  
+Note that the program `create_ddmog_plot.py` can be used to create a png picture of a DDMOG
 given the path to its adjacency matrix.
 
 Note that if a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
@@ -100,3 +107,19 @@ See `magicutils/distance_magic/graphs.py` for implementations.
 I haven't implement the actual formulas for some of the sequences yet,
 but in theory the constructions work.
 
+When n > 138, a Langford sequence can be used to 
+label an arbitrary number of pairs of K_{3,3}
+added on to a DDMOG with n vertices.
+The program `disconnected_conjecture.py` uses 
+`ddmo_generator.py` in 
+`magicutils/distance_magic/ddmo_generator.py`
+to guess orientations and labelings of base graphs
+found by `DDMOStitcher` in
+`magicutils/distance_magic/ddmog_iterator.py`
+with pairs of K_{3,3} added on to the base graph.
+Results for n <= 138 can be found in the `disconnected_conjecture`
+directory.
+
+Note that these examples combined with examples in the `sparsest_ddmogs`
+directory combined with the Langford sequence construction demonstrate
+that minimal sparsity DDMOGs exist for all n >= 10.

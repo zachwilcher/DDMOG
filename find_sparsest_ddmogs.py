@@ -7,8 +7,8 @@ from magicutils.distance_magic.io_utils import save, save_plot
 import math
 
 results_directory = "sparsest_ddmogs"
-require_connected = True
-require_disconnected = False
+require_connected = False
+require_disconnected = True
 save_plots = True
 max_search_time = None
 
