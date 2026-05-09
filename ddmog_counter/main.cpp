@@ -5,11 +5,18 @@
 #include <stack>
 #include <chrono>
 
-int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, const Eigen::Index vertex = 0, const int64_t trivial_bits = 0) {
+int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, const Eigen::Index vertex = 0) {
     int64_t nontrivial_count = 0;
     const Eigen::Index n = A.rows();
 
     if(vertex == n) {
+        // check if the ddmog is trivial
+        for(Eigen::Index i = 0; i < n; i++) {
+            const int degree = A.row(i).sum() + A.col(i).sum();
+            if(degree == 0) {
+                return 0;
+            }
+        }
         return 1;
     }
 
@@ -66,8 +73,6 @@ int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, c
             
             Eigen::MatrixXi new_A = A;
 
-            int64_t new_trivial_bits = trivial_bits;
-            const int64_t vertex_mask = (1 << vertex);
 
             for(Eigen::Index i = 0; i < l; i++) {
                 Eigen::Index other_vertex = vertex + 1 + i;
@@ -77,19 +82,8 @@ int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, c
                 } else if (cur_solution[i] < 0) {
                     new_A(other_vertex, vertex) = 1;
                 }
-
-                if(cur_solution[i] != 0) {
-                    const int64_t other_vertex_mask = (1 << other_vertex);
-                    new_trivial_bits = vertex_mask | new_trivial_bits;
-                    new_trivial_bits = other_vertex_mask | new_trivial_bits;
-                }
             }
-
-            
-            // only recurse if the current vertex has an incoming our outgoing arc.
-            if((new_trivial_bits & vertex_mask) == vertex_mask) {
-                nontrivial_count += count_ddmogs(label_vec, new_A, vertex + 1, new_trivial_bits);
-            }
+            nontrivial_count += count_ddmogs(label_vec, new_A, vertex + 1);
         }
     }
 
@@ -118,5 +112,5 @@ int main(int argc, char* argv[]) {
 
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
 
-    std::cout << "Found " << nontrival_count << " DDMOGs with " << n << " vertices in " << duration.count() << " seconds.";
+    std::cout << "Found " << nontrival_count << " DDMOGs with " << n << " vertices in " << duration.count() << " seconds.\n";
 }
