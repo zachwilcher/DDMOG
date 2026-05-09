@@ -123,3 +123,25 @@ directory.
 Note that these examples combined with examples in the `sparsest_ddmogs`
 directory combined with the Langford sequence construction demonstrate
 that minimal sparsity DDMOGs exist for all n >= 10.
+
+
+## Building ddmog_counter
+CMake will need to be installed on your local system.
+
+Make sure the conda environment is created and initialized with
+```bash
+conda env create --prefix .conda-env -f conda-environment.yml
+conda activate ./.conda-env
+```
+
+Create the build system in `./build` with cmake.
+```bash
+cmake -B build
+```
+
+Finally, enter the build directory, compile the executable, and execute.
+```bash
+cd build
+make
+./ddmog_counter
+```
