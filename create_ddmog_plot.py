@@ -1,5 +1,5 @@
 import sys
-from magicutils.distance_magic.io_utils import save_plot, load
+from ddm.sagemath import save_plot, load_graph
 from os import listdir
 from pathlib import Path
 
@@ -7,8 +7,7 @@ def main(matrix_path, output_path=None):
     """If output_path is None, then try to create the plot in the same directory
     as the matrix path with the same name."""
 
-    digraph = load(matrix_path)
-
+    digraph = load_graph(matrix_path)
 
     if output_path is None:
         parent = matrix_path.parents[0]

@@ -2,8 +2,8 @@ import sys
 import math
 from pathlib import Path
 from sage.graphs.connectivity import is_connected
-from magicutils.distance_magic.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
-from magicutils.distance_magic.io_utils import save, save_plot
+from ddm.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
+from ddm.sagemath import save_graph, save_plot
 import math
 
 results_directory = "sparsest_ddmogs"
@@ -36,7 +36,7 @@ class MyStitcherCallback(DDMOGStitcherCallback):
         path_str += ".txt"
         path = Path(path_str)
 
-        save(digraph, path)
+        save_graph(digraph, path)
         if save_plots:
             save_plot(digraph, path.with_suffix(".png"))
         self.stop_search()

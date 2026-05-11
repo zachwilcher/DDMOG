@@ -5,12 +5,12 @@ import sys
 import math
 from pathlib import Path
 from sage.graphs.connectivity import is_connected
-from magicutils.distance_magic.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
-from magicutils.distance_magic.io_utils import save, save_plot
+from ddm.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
+from ddm.sagemath import save_graph, save_plot
 import math
 
 # options to force resulting graphs to be connected or disconnected
-require_disconnected = True
+require_disconnected = False
 require_connected = False
 save_plots = True
 # max search time in seconds
@@ -50,7 +50,7 @@ class MyStitcherCallback(DDMOGStitcherCallback):
                 graph_file_str += "_not_connected"
             graph_file_str += ".txt"
             graph_path = MyStitcherCallback.results_directory / graph_file_str
-            save(digraph, graph_path)
+            save_graph(digraph, graph_path)
 
             if save_plots:
                 save_plot(digraph, graph_path.with_suffix(".png"))
@@ -77,6 +77,11 @@ def main(order):
     # The graph can be 3-regular only when n = 0 (mod 4)
     if (order % 4 == 0):
         max_degree = 3
+    
+    # special case
+    if order == 8:
+        max_degree = 4
+        max_size = 13
             
     # initialize custom class variables ... 
     MyStitcherCallback.results_directory = results_directory

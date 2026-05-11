@@ -9,3 +9,4 @@ dependencies:
   - numba
   - ortools-python
   - eigen
+  - networkx
