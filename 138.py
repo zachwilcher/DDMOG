@@ -10,7 +10,7 @@ from ddm.ddmo_generator import ddmo_generator
 from sage.graphs.digraph import DiGraph
 from pathlib import Path
 
-output_dir = "138"
+output_dir = "graphs/138"
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 # Pick out the graphs that we conjectured can be used as base graphs for adding
@@ -19,20 +19,20 @@ Path(output_dir).mkdir(parents=True, exist_ok=True)
 # for the modulo 8 case.
 base_graphs = {
     0: DiGraph(),
-    1: load_graph("sparsest_ddmogs/order_13_ddmog.txt"),
-    2: load_graph("sparsest_ddmogs/order_14_ddmog_not_connected.txt"),
-    3: load_graph("sparsest_ddmogs/order_15_ddmog_not_connected.txt"),
-    4: load_graph("sparsest_ddmogs/order_16_ddmog_not_connected.txt"),
-    5: load_graph("sparsest_ddmogs/order_5_ddmog.txt"),
-    6: load_graph("sparsest_ddmogs/order_18_ddmog_not_connected.txt"),
-    7: load_graph("sparsest_ddmogs/order_19_ddmog_not_connected.txt"),
-    8: load_graph("sparsest_ddmogs/order_32_ddmog_not_connected.txt"),
-    9: load_graph("sparsest_ddmogs/order_21_ddmog_not_connected.txt"),
-    10: load_graph("sparsest_ddmogs/order_22_ddmog_not_connected.txt"),
-    11: load_graph("sparsest_ddmogs/order_11_ddmog_not_connected.txt")
+    1: load_graph("graphs/sparsest_ddmogs/order_13_ddmog.txt"),
+    2: load_graph("graphs/sparsest_ddmogs/order_14_ddmog_not_connected.txt"),
+    3: load_graph("graphs/sparsest_ddmogs/order_15_ddmog_not_connected.txt"),
+    4: load_graph("graphs/sparsest_ddmogs/order_16_ddmog_not_connected.txt"),
+    5: load_graph("graphs/sparsest_ddmogs/order_5_ddmog.txt"),
+    6: load_graph("graphs/sparsest_ddmogs/order_18_ddmog_not_connected.txt"),
+    7: load_graph("graphs/sparsest_ddmogs/order_19_ddmog_not_connected.txt"),
+    8: load_graph("graphs/sparsest_ddmogs/order_32_ddmog_not_connected.txt"),
+    9: load_graph("graphs/sparsest_ddmogs/order_21_ddmog_not_connected.txt"),
+    10: load_graph("graphs/sparsest_ddmogs/order_22_ddmog_not_connected.txt"),
+    11: load_graph("graphs/sparsest_ddmogs/order_11_ddmog_not_connected.txt")
 }
 
-K33_pair = load_graph("sparsest_ddmogs/order_12_ddmog_not_connected.txt")
+K33_pair = load_graph("graphs/sparsest_ddmogs/order_12_ddmog_not_connected.txt")
 
 def add_K33_pairs(graph, x):
     """Add x pairs of K_{3,3} to the graph

@@ -62,7 +62,7 @@ def main(order):
     or math.ceil(3 * order / 2) + 1 edges if n = 2 (mod 4)"""
 
     # ensure results_directory exists
-    results_directory_str = f"sparsest_order_{order}_classes"
+    results_directory_str = f"graphs/sparsest_order_{order}_classes"
     results_directory = Path(results_directory_str)
     results_directory.mkdir(parents=True, exist_ok=True)
 

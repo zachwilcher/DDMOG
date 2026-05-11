@@ -7,7 +7,7 @@ from pathlib import Path
 def parse_muell_ddmogs():
     muell_ddmogs = []
     n = 8
-    path = Path("muell_order_8_adjacency_matrices.txt")
+    path = Path("graphs/muell_order_8_adjacency_matrices.txt")
     total_examples = 8240
 
     with open(path, "r") as f:

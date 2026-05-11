@@ -1,6 +1,5 @@
 import sys
 from ddm.sagemath import save_plot, load_graph
-from os import listdir
 from pathlib import Path
 
 def main(matrix_path, output_path=None):

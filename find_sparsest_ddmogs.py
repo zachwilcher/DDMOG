@@ -6,7 +6,7 @@ from ddm.ddmog_stitcher import DDMOGStitcher, DDMOGStitcherCallback
 from ddm.sagemath import save_graph, save_plot
 import math
 
-results_directory = "sparsest_ddmogs"
+results_directory = "graphs/sparsest_ddmogs"
 require_connected = False
 require_disconnected = True
 save_plots = True
