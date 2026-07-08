@@ -1,98 +1,110 @@
-"""
-We guess that by adding pairs of copies of K_{3,3}
-to certain base graphs, the graph remains DDMO. 
-However, the labeling scheme using Langford sequences
-does not work until n >= 138. 
-This program uses a SAT solver to try and guess the remaining cases.
-"""
-from ddm.sagemath import load_graph, save_graph
 from ddm.ddmo_generator import ddmo_generator
-from sage.graphs.digraph import DiGraph
+from ddm.sagemath import load_graph, save_graph, disjoint_union
 from pathlib import Path
+import sys
 
-output_dir = "graphs/138"
-Path(output_dir).mkdir(parents=True, exist_ok=True)
+H = load_graph(Path("graphs/H.txt"))
+W4 = load_graph(Path("graphs/W4.txt"))
+O = load_graph(Path("graphs/O.txt"))
+Q = load_graph(Path("graphs/Q.txt"))
+K33 = load_graph(Path("graphs/K33.txt"))
 
-# Pick out the graphs that we conjectured can be used as base graphs for adding
-# on x pairs of K_{3,3} Note that these choices are a bit arbitrary. 
-# For example, we probably could have used sparsest_ddmogs/order_20_ddmog.txt
-# for the modulo 8 case.
-base_graphs = {
-    0: DiGraph(),
-    1: load_graph("graphs/sparsest_ddmogs/order_13_ddmog.txt"),
-    2: load_graph("graphs/sparsest_ddmogs/order_14_ddmog_not_connected.txt"),
-    3: load_graph("graphs/sparsest_ddmogs/order_15_ddmog_not_connected.txt"),
-    4: load_graph("graphs/sparsest_ddmogs/order_16_ddmog_not_connected.txt"),
-    5: load_graph("graphs/sparsest_ddmogs/order_5_ddmog.txt"),
-    6: load_graph("graphs/sparsest_ddmogs/order_18_ddmog_not_connected.txt"),
-    7: load_graph("graphs/sparsest_ddmogs/order_19_ddmog_not_connected.txt"),
-    8: load_graph("graphs/sparsest_ddmogs/order_32_ddmog_not_connected.txt"),
-    9: load_graph("graphs/sparsest_ddmogs/order_21_ddmog_not_connected.txt"),
-    10: load_graph("graphs/sparsest_ddmogs/order_22_ddmog_not_connected.txt"),
-    11: load_graph("graphs/sparsest_ddmogs/order_11_ddmog_not_connected.txt")
-}
-
-K33_pair = load_graph("graphs/sparsest_ddmogs/order_12_ddmog_not_connected.txt")
-
-def add_K33_pairs(graph, x):
-    """Add x pairs of K_{3,3} to the graph
-    with vertices of the K_{3,3} pairs
-    starting at n and going up to 12x + n
-    i.e. the vertices of the original graph remain
-    unchanged.
-
-    Assumes graph vertices are integers from 0 to n - 1
-
-    Note the returned graph has no labels but keeps the edge orientations
-    of the original graph.
-    """
-
-    n = graph.order()
-
-    result = DiGraph()
-    result.add_vertices(range(n + 12 * x))
-
-    for (u,v,_) in graph.edges():
-        result.add_edge(u,v)
-
-    other_order = K33_pair.order()
-    for i in range(x):
-        for (u,v,_) in K33_pair.edges():
-            result.add_edge(n + other_order*i + u, n + other_order*i + v)
-
+def add_K33_instances(base_graph, x):
+    result = base_graph
+    for _ in range(x):
+        result = disjoint_union(result, K33)
     return result
+
+def find_ddm_labeling(graph):
+    forced_edges = []
+    for (u,v,_) in graph.edges():
+        forced_edges.append((u,v))
+
+    result = None
+    for digraph in ddmo_generator(graph, forced_edges=forced_edges):
+        result = digraph
+        break
+    return result
+
+def create_table(base_graph, increment=1):
+    """Given a DDMOG, add on copies of K33 and find DDM labelings of the new graph until n > 138,
+    and summarize the results in a table."""
+
+    s = ""
+    s += "\\begin{tabular}{| c | c |}\n"
+    s += "\\hline\n"
+    s += "\\(n\\) and \\(x\\) & Base Labeling and Difference Triples\\\\\n"
+    s += "\\hline\n"
+
+    og_base_graph_labels = []
+    for i in range(base_graph.order()):
+        label = int(base_graph.get_vertex(i))
+        og_base_graph_labels.append(label)
+    n = base_graph.order()
+    x = 0
+    while n + K33.order() <= 138:
+        x += increment
+        print(f"Adding on {x} copies of K33 to order {base_graph.order()} graph...")
+        unlabeled_graph = add_K33_instances(base_graph, x)
+        n = unlabeled_graph.order()
+        graph = find_ddm_labeling(unlabeled_graph)
+        if graph is None:
+            raise RuntimeError("No DDM labeling was found using the specified base graph!")
+
+        base_graph_labels = [0] * base_graph.order()
+        for v in range(base_graph.order()):
+            label = int(graph.get_vertex(v))
+            og_label = og_base_graph_labels[v]
+            base_graph_labels[og_label - 1] = label
+
+        triples = []
+        for i in range(x):
+            offset = base_graph.order() + K33.order() * i
+            # The orientation of K33 that we are using 
+            # guarantees the triples will be in the following locations.
+            triple1 = [graph.get_vertex(offset + j) for j in [2, 1, 0]]
+            triple2 = [graph.get_vertex(offset + j) for j in [5, 4, 3]]
+            triples.append(triple1)
+            triples.append(triple2)
+
+        s += f"\\(n={n}\\) & \n"
+        s += ",".join(map(str,base_graph_labels))
+        s += "\\\\\n"
+        s += "\\cline{2-2}\n"
+        s += f"\\(x={x}\\)\n"
+
+        max_triples_per_row = 10
+        for row in range(len(triples) // max_triples_per_row + 1):
+            i = row * max_triples_per_row
+            if i == len(triples):
+                break
+            s += "&"
+            while (i < len(triples)) and (i // max_triples_per_row == row):
+                triple = triples[i]
+                triple_str = "(" + ",".join(map(str,triple)) + ")"
+                s += triple_str
+                if i < len(triples) - 1:
+                    s += ","
+                i += 1
+            s += "\\\\\n"
+
+        s += "\\hline \n"
+
+    s += "\\end{tabular}"
+    return s
 
 
 def main():
-    x = 0
-    while True:
-        x += 1
-        for base_graph in base_graphs.values():
-            n = base_graph.order()
-            digraph = add_K33_pairs(base_graph, x)
-            if (digraph.order() > 138) or (digraph.order() <= 38):
-                # We have constructions for > 138 or <= 38 
-                continue
-            
-            # preserve the edge connections of the K_{3,3} pairs
-            # since there is essentially only one valid orientation
-            forced_edges = []
-            for (u,v,_) in digraph.edges():
-                if (u >= n) and (v >= n):
-                    forced_edges.append((u,v))
-            
-            print(f"Trying to add {x} pairs of K_3,3 to order {base_graph.order()} graph...")
-            for result in ddmo_generator(digraph, forced_edges=forced_edges):
-                print(f"Found DDM orientation and labeling of order {result.order()} graph!")
-                name = f"order_{result.order()}_ddmog"
-                save_graph(result, f"{output_dir}/{name}.txt")
-                break
-
-        # if x > 12, then n >= 12 * x > 144 which we already have constructions for.
-        if x > 12:
-            break
-
-
+    if len(sys.argv) != 4:
+        print(f"Usage: {sys.argv[0]} <path to base graph> <output path> <increment>")
+        return 1
+    base_graph_path = Path(sys.argv[1])
+    base_graph = load_graph(base_graph_path)
+    increment = int(sys.argv[3])
+    table_str = create_table(base_graph, increment)
+    table_path = Path(sys.argv[2])
+    with open(table_path, "w") as f:
+        f.write(table_str)
 
 if __name__ == "__main__":
     main()

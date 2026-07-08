@@ -7,7 +7,7 @@ int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, c
     int64_t nontrivial_count = 0;
     const Eigen::Index n = A.rows();
 
-    if(vertex == n) {
+    if(vertex == n-1) {
         // check if the ddmog is trivial
         for(Eigen::Index i = 0; i < n; i++) {
             const int degree = A.row(i).sum() + A.col(i).sum();
@@ -52,9 +52,6 @@ int64_t count_ddmogs(const Eigen::VectorXi label_vec, const Eigen::MatrixXi A, c
                     solution[index] = 0;
                     break;
             }
-            // This is slower than the switch statement above.
-            // solution[index] = ((solution[index] + 3) % 3) - 1;
-            // carry = solution[index] == 0;
             index++;
         }
         if(carry) {

@@ -35,11 +35,11 @@ class MyStitcherCallback(DDMOGStitcherCallback):
 
 
         found = False
-        for index, graph in enumerate(MyStitcherCallback.digraph_classes):
-            if graph.to_undirected().is_isomorphic(digraph.to_undirected()):
-                found = True
-                MyStitcherCallback.digraph_class_sizes[index] += 1
-                break
+        #for index, graph in enumerate(MyStitcherCallback.digraph_classes):
+        #    if graph.to_undirected().is_isomorphic(digraph.to_undirected()):
+        #        found = True
+        #        MyStitcherCallback.digraph_class_sizes[index] += 1
+        #        break
         if not found:
             MyStitcherCallback.digraph_classes.append(digraph)
             MyStitcherCallback.digraph_class_sizes.append(1)

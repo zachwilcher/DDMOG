@@ -1,0 +1,11 @@
+graph order
+6
+adjacency matrix
+0 0 0 0 1 1
+0 0 0 1 0 0
+0 0 0 1 0 0
+1 0 0 0 0 0
+0 1 1 0 0 0
+0 1 1 0 0 0
+label vector
+1 2 3 4 5 6

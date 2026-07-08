@@ -51,6 +51,34 @@ def create_graph(A, label_vec=None):
                 digraph.add_edge(i,j)
     return digraph
 
+def normalize_vertices(digraph):
+    """Given a digraph labeled with integers, create a digraph with the same labeling and arcs
+    except the vertices are the integers 0 through n inclusive."""
+    A = get_adj_matrix(digraph)
+    label_vec = get_label_vec(digraph)
+    result = create_graph(A, label_vec)
+    return result
+
+def disjoint_union(G1, G2):
+    """Given two digraphs whose vertices are integers 0 through n return the disjoint union."""
+    # I know there is a sagemath built in function to do this but I want to make sure the vertices
+    # in the result are implemented in the following way.
+    n1 = G1.order()
+    n2 = G2.order()
+    result = DiGraph()
+    result.add_vertices(range(n1 + n2))
+    for (u,v,_) in G1.edges():
+        result.add_edge(u,v)
+    for (u,v,_) in G2.edges():
+        result.add_edge(u + n1, v + n1)
+    for v in range(n1):
+        label = G1.get_vertex(v)
+        result.set_vertex(v, label)
+    for v in range(n2):
+        label = G2.get_vertex(v)
+        result.set_vertex(v + n1, label)
+    return result
+
 def save_graph(digraph, path): 
     """Write a sagemath graph to disk"""
     A = get_adj_matrix(digraph)
