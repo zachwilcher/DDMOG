@@ -1,3 +1,4 @@
+"""Module for parsing and filtering through the order 8 DDMOGs found by Mark Muell's program: https://github.com/MuellMark/DDMGraphLabelingGenerator"""
 import numpy as np
 from sage.graphs.digraph import DiGraph
 from ddm.sagemath import is_graph_trivial, is_graph_ddm, save_plot

@@ -1,3 +1,4 @@
+"""Command line tool for automatically creating a tikz picture of a labeled oriented graph"""
 import networkx as nx
 import sys
 from ddm.text import load_olg

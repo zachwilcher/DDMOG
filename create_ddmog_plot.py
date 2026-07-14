@@ -1,3 +1,4 @@
+"""Command line tool for creating a png of a labeled oriented graph"""
 import sys
 from ddm.sagemath import save_plot, load_graph
 from pathlib import Path

@@ -1,7 +1,7 @@
 """Module for interfacing with sagemath"""
 import numpy as np
 from sage.graphs.digraph import DiGraph
-from .text import save_olg, load_olg
+from .text import save_olg, load_olg, hash_olg
 from .checks import is_trivial, is_ddm
 
 def get_adj_matrix(digraph):
@@ -60,7 +60,7 @@ def normalize_vertices(digraph):
     return result
 
 def disjoint_union(G1, G2):
-    """Given two digraphs whose vertices are integers 0 through n return the disjoint union."""
+    """Given two digraphs whose vertices are integers 0 through n-1 return the disjoint union."""
     # I know there is a sagemath built in function to do this but I want to make sure the vertices
     # in the result are implemented in the following way.
     n1 = G1.order()
@@ -107,4 +107,11 @@ def is_graph_ddm(digraph):
     A = get_adj_matrix(digraph)
     label_vec = get_label_vec(digraph)
     result = is_ddm(A, label_vec)
+    return result
+
+def hash_graph(digraph, bytes=10, no_labels=False):
+    """Get a string hash of a labeled digraph"""
+    A = get_adj_matrix(digraph)
+    label_vec = None if no_labels else get_label_vec(digraph)
+    result = hash_olg(A, label_vec, bytes)
     return result

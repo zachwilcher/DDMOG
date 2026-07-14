@@ -1,3 +1,4 @@
+"""Module for determining various graph properties to assist in finding graphs in graph databases such as houseofgraphs"""
 from pathlib import Path
 import sys
 from ddm.sagemath import load_graph

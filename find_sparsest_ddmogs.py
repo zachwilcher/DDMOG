@@ -1,3 +1,4 @@
+"""Command line tool for using DDMOG Stitcher (see ddm.ddmog_stitcher)"""
 import sys
 import math
 from pathlib import Path

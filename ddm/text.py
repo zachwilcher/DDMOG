@@ -1,6 +1,7 @@
 """Module for working with text and file
 representations of oriented and labeled graphs (OLGs)"""
 import numpy as np
+import hashlib
 
 graph_order_header="graph order"
 adjacency_matrix_header = "adjacency matrix"
@@ -98,3 +99,16 @@ def old_load_olg(path):
                     A[i,j] = 1
         return A, label_vec
 
+
+
+def hash_olg(A, label_vec, bytes=10):
+    """Generate a hash of an olg via its adjacency matrix and label vector."""
+    A_bytes = np.ascontiguousarray(A).tobytes()
+    label_vec_bytes = np.ascontiguousarray(label_vec).tobytes()
+
+    hasher = hashlib.shake_128()
+    hasher.update(A_bytes)
+    if label_vec is not None:
+        hasher.update(label_vec_bytes)
+    result = hasher.hexdigest(bytes)
+    return result
