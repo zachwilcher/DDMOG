@@ -5,6 +5,14 @@ This work utilized the Ball State University beowulf cluster, which is supported
 by The National Science Foundation (MRI-1726017) and Ball State University,
 Muncie, Indiana.
 
+## Sparse graphs with less than or equal to 138 vertices
+In the 138 directory, there is a collection of files with bespoke labelings of graphs
+with less than or equal to 138 vertices having the form of `G \sqcup 2x K_{3,3}`.
+There are two files for each graph: 
+1. The base graph's G's adjacency matrix and labeling in `138/n-base-graph.txt`
+2. A set of difference triples partitioning the remaining labels in `138/n-difference-triples.txt`
+
+
 ## How the project was set up
 This project uses a conda environment to manage dependencies.
 See the `conda-environment.yml` file for the list of packages used.
@@ -42,28 +50,31 @@ ln -s libgsl.27.dylib libgsl.25.dylib
 There are multiple approaches to searching for DDMOGs implemented in this repository.
 1. A backtracking search through all possible solutions to the weight equation using `DDMOGIterator` in `magicutils/distance_magic/ddmog_iterator.py`.
 2. A C++ implementation of the `DDMOGIterator` algorithm is in the `ddmog_counter` directory that simply
-counts the number
-2. A SAT solver approach using `DDMOGStitcher` in `magicutils/distance_magic/ddmog_stitcher.py` that attempts to "stitch" together possible rows of an order n DDMOG's skew adjacency matrix.
+counts the number of DDMOGs with some fixed number of vertices.
+2. A SAT solver approach using `DDMOGStitcher` in `magicutils/distance_magic/ddmog_stitcher.py` that attempts to "stitch" together possible rows of an order n DDMOG's skew adjacency matrix to find new examples. 
 3. A SAT solver approach 
 using `ddmo_generator` in `magicutils/distance_magic/ddmo_generator.py`
-that tries to find a valid DDM orientation and labeling of an unoriented graph.
-
+that tries to find a valid DDM orientation and labeling of a given unoriented graph.
 
 ### Stitching with SAT Solver
-Adding maximum size constraints to the SAT solver allows for finding sparse DDMOGs with much higher vertex counts.
-However, searching for all DDMOGs of a given order with this approach is marginally slower than `DDMOGIterator`.
+Adding maximum size constraints to the SAT solver allows for finding sparse DDMOGs with much higher vertex counts than
+the ones iterated through with `DDMOGIterator`
+Although, the C++ implementation of DDMOGIterator is significantly faster than waiting for the SAT solver to run its
+course over all solutions it can find.
 
-The python program `find_sparsest_ddmogs.py` searches for DDMOGs with minimal
-sparsity (ceil(3n/2) edges or ceil(3n/2) + 1 edges if n = 2 (mod 4)) and outputs
-their adjacency matrices in the directory `sparsest_ddmogs`.  The results of
-this program for orders up to 38 are available in the repository (when n > 38 we use too much memory...).  
+The python program `find_sparsest_ddmogs.py` searches for DDMOGs with n vertices and
+(ceil(3n/2) edges or ceil(3n/2) + 1 edges if n = 2 (mod 4)), while outputing
+their adjacency matrices in the directory `graphs/sparsest_ddmogs`.  The results of
+this program are available for n <= 38 (when n > 38 we use too much memory even on Ball State's cluster).  
 Note that the program `create_ddmog_plot.py` can be used to create a png picture of a DDMOG
 given the path to its adjacency matrix.
 
-Note that if a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4)
-then the graph is 3-regular. Adding up each label 3 times corresponds exactly
-to the number of times each label appears in the weight equations.
+The reason for requiring the DDMOGs to have the above number of edges is 
+if a DDMOG has n vertices and 3n/2 edges when n = 2 (mod 4),
+then the graph must be 3-regular. Adding up each label 3 times corresponds exactly
+to the number of times each label appears in the graph's weight equations.
 It can be shown that this sum is an integer only when n = 0,3 (mod 4).
+So, graphs with "minimal sparsity" must have the above number of arcs.
 
 Some additional constraints that might interesting to explore are
 - Searching for k-regular DDMO graphs when k > 3.
@@ -95,14 +106,15 @@ make
 ## Constructing Sparse DDMOGs
 Skolem sequences and near-Skolem sequences can be used to construct DDMOGs
 with ceil(3n/2) edges whenever n >= 10 and n = 0,5,11 (mod 12).  
-See `magicutils/distance_magic/graphs.py` for implementations.
+See `magicutils/distance_magic/graphs.py` for some partial implementations.
 
 I haven't implement the actual formulas for some of the sequences yet,
 but in theory the constructions work.
 
-When n > 138, a Langford sequence can be used to 
-label an arbitrary number of pairs of K_{3,3}
-added on to a DDMOG with n vertices.
+One of the most interesting results in my opinion is that if n > 138, 
+a Langford sequence can be used to 
+label an arbitrary number of pairs of K_{3,3} labeled with the numbers
+
 The program `disconnected_conjecture.py` uses 
 `ddmo_generator.py` in 
 `magicutils/distance_magic/ddmo_generator.py`
