@@ -1,0 +1,3 @@
+difference triples
+(9, 7, 16)
+(5, 14, 19)

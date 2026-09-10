@@ -1,0 +1,4 @@
+graph order
+0
+adjacency matrix
+label vector

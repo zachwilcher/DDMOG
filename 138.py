@@ -3,7 +3,8 @@ some minimal sparsity base graph. Valid labelings are found for each graph with 
 then the labeling of the base graph and the difference triples used on the K_{3,3} instances are extracted and
 written to a human readable latex table."""
 from ddm.ddmo_generator import ddmo_generator
-from ddm.sagemath import load_graph, save_graph, disjoint_union, hash_graph
+from ddm.sagemath import load_graph, save_graph, disjoint_union, hash_graph, get_adj_matrix, get_label_vec
+from ddm.text import save_olg
 from pathlib import Path
 import sys
 
@@ -43,7 +44,7 @@ def find_ddm_labeling(graph):
 
     return result
 
-def create_table(base_graph, start, increment):
+def find_less_than_138(base_graph, start, increment):
     """Given a DDMOG, add on copies of K33 and find DDM labelings of the new graph until n > 138,
     and summarize the results in a table."""
 
@@ -60,10 +61,6 @@ def create_table(base_graph, start, increment):
 
     # s is the string containing the latex code for the table
     s = ""
-    s += "\\begin{tabular}{| c | c |}\n"
-    s += "\\hline\n"
-    s += "\\(n\\) and \\(x\\) & Base Labeling and Difference Triples\\\\\n"
-    s += "\\hline\n"
 
     while base_graph.order() + K33.order() * x <= max_graph_order:
 
@@ -95,52 +92,29 @@ def create_table(base_graph, start, increment):
 
             triples.append(triple1)
             triples.append(triple2)
-        
-        #
-        # ----- Write the base graph's labeling and difference triples to the table -----
-        #
 
-        s += f"\\(n={graph.order()}\\) & \n"
-        s += ",".join(map(str,base_graph_labels))
-        s += "\\\\\n"
-        s += "\\cline{2-2}\n"
-        s += f"\\(x={x}\\)\n"
-
-        for row in range(len(triples) // max_triples_per_row + 1):
-            i = row * max_triples_per_row
-            if i == len(triples):
-                break
-            s += "&"
-            while (i < len(triples)) and (i // max_triples_per_row == row):
-                triple = triples[i]
-                triple_str = "(" + ",".join(map(str,triple)) + ")"
-                s += triple_str
-                if i < len(triples) - 1:
-                    s += ","
-                i += 1
-            s += "\\\\\n"
-
-        s += "\\hline \n"
+        A = get_adj_matrix(base_graph)
+        n = base_graph.order() + K33.order() * x
+        base_graph_path = Path(f"138/{n}-base-graph.txt")
+        save_olg(A, base_graph_labels, base_graph_path)
+        triples_path = Path(f"138/{n}-difference-triples.txt")
+        with open(triples_path, "w") as f:
+            f.write("difference triples\n")
+            for triple in triples:
+                f.write(f"({triple[0]}, {triple[1]}, {triple[2]})\n")
 
         x += increment
 
-    s += "\\end{tabular}"
-
-    return s
-
 
 def main():
-    if len(sys.argv) != 5:
-        print(f"Usage: {sys.argv[0]} <path to base graph> <output path> <start> <increment>")
+    if len(sys.argv) != 4:
+        print(f"Usage: {sys.argv[0]} <path to base graph> <start> <increment>")
         return 1
     base_graph_path = Path(sys.argv[1])
-    table_path = Path(sys.argv[2])
-    start = int(sys.argv[3])
-    increment = int(sys.argv[4])
+    start = int(sys.argv[2])
+    increment = int(sys.argv[3])
     base_graph = load_graph(base_graph_path)
-    table_str = create_table(base_graph, start, increment)
-    with open(table_path, "w") as f:
-        f.write(table_str)
+    find_less_than_138(base_graph, start, increment)
 
 if __name__ == "__main__":
     main()

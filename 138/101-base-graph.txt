@@ -1,0 +1,10 @@
+graph order
+5
+adjacency matrix
+0 0 1 1 0
+1 0 0 1 0
+0 0 0 0 1
+0 0 1 0 0
+1 1 0 0 0
+label vector
+11 58 69 32 43
